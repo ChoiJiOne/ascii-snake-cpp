@@ -1,9 +1,15 @@
 #include <Windows.h>
 
+#include "ConsoleManager.h"
+#include "InputManager.h"
+
 #include "GameContext.h"
 
 int main(void)
 {
+	ConsoleManager::Get().Startup();
+	InputManager::Get().Startup();
+
 	GameContext context;
 	
 	int32_t x = 10;
@@ -48,6 +54,9 @@ int main(void)
 
 		context.Render();
 	}
-	
+
+	InputManager::Get().Shutdown();
+	ConsoleManager::Get().Shutdown();
+
 	return 0;
 }
