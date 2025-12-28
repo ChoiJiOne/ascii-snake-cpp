@@ -1,6 +1,15 @@
+#include <Windows.h>
 #include <cassert>
 
 #include "GameContext.h"
+
+void Gotoxy(int32_t x, int32_t y)
+{
+	COORD pos = { x, y };
+	HANDLE output = GetStdHandle(STD_OUTPUT_HANDLE);
+	SetConsoleCursorPosition(output, pos);
+}
+
 
 GameContext::GameContext()
 {
@@ -30,26 +39,14 @@ GameContext::~GameContext()
 {
 }
 
-void GameContext::SetTile(int32_t x, int32_t y, const ETile& tile)
-{
-	assert(IsValidTile(x, y));
-
-	int32_t offset = y * _colSize + x;
-	if (_tiles[offset] == tile)
-	{
-		return;
-	}
-
-	_tiles[offset] = tile;
-	_isDirty = true;
-}
-
 void GameContext::Render()
 {
 	if (!_isDirty)
 	{
 		return;
 	}
+
+	Gotoxy(0, 0);
 
 	for (int y = 0; y < _rowSize; ++y)
 	{
@@ -68,6 +65,28 @@ void GameContext::Render()
 	}
 
 	_isDirty = false;
+}
+
+void GameContext::SetTile(int32_t x, int32_t y, const ETile& tile)
+{
+	assert(IsValidTile(x, y));
+
+	int32_t offset = y * _colSize + x;
+	if (_tiles[offset] == tile)
+	{
+		return;
+	}
+
+	_tiles[offset] = tile;
+	_isDirty = true;
+}
+
+const ETile& GameContext::GetTile(int32_t x, int32_t y)
+{
+	assert(IsValidTile(x, y));
+
+	int32_t offset = y * _colSize + x;
+	return _tiles[offset];
 }
 
 bool GameContext::IsOutline(int32_t x, int32_t y)

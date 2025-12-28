@@ -1,3 +1,5 @@
+#include <Windows.h>
+
 #include "GameContext.h"
 
 int main(void)
@@ -13,6 +15,37 @@ int main(void)
 	bool isDone = false;
 	while (!isDone)
 	{
+		int32_t newX = x;
+		int32_t newY = y;
+
+		if (HIBYTE(GetAsyncKeyState(VK_DOWN)))
+		{
+			newY++;
+		}
+		if (HIBYTE(GetAsyncKeyState(VK_UP)))
+		{
+			newY--;
+		}
+		if (HIBYTE(GetAsyncKeyState(VK_LEFT)))
+		{
+			newX--;
+		}
+		if (HIBYTE(GetAsyncKeyState(VK_RIGHT)))
+		{
+			newX++;
+		}
+
+		if (context.IsValidTile(newX, newY))
+		{
+			const ETile& tile = context.GetTile(x, y);
+			
+			context.SetTile(x, y, ETile::EMPTY);
+
+			x = newX;
+			y = newY;
+			context.SetTile(x, y, ETile::HEAD);
+		}
+
 		context.Render();
 	}
 	
