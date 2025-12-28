@@ -86,5 +86,5 @@ bool GameContext::IsOutline(int32_t x, int32_t y)
 
 bool GameContext::IsValidTile(int32_t x, int32_t y)
 {
-	return (0 <= x && x <= _colSize - 1) && (0 <= y || y <= _rowSize - 1);
+	return (0 <= x && x <= _colSize - 1) && (0 <= y && y <= _rowSize - 1);
 }
