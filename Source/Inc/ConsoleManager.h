@@ -13,6 +13,7 @@ public:
 	virtual void Shutdown() override;
 	
 	void MoveCursor(int32_t x, int32_t y);
+	void SetVisibleCursor(bool isVisible);
 
 private:
 	friend class IManager<ConsoleManager>;

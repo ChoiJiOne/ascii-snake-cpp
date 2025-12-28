@@ -30,3 +30,12 @@ void ConsoleManager::MoveCursor(int32_t x, int32_t y)
 	COORD cursorPos = { x, y };
 	assert(SetConsoleCursorPosition(_outputHandle, cursorPos));
 }
+
+void ConsoleManager::SetVisibleCursor(bool isVisible)
+{
+	CONSOLE_CURSOR_INFO info;
+
+	assert(GetConsoleCursorInfo(_outputHandle, &info));
+	info.bVisible = isVisible;
+	assert(SetConsoleCursorInfo(_outputHandle, &info));
+}
