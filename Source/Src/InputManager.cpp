@@ -46,7 +46,7 @@ void InputManager::Tick()
 	for (const auto& key : _keys)
 	{
 		_prevKeyPressMap[key] = _currKeyPressMap[key];
-		_currKeyPressMap[key] = (GetAsyncKeyState(VK_SPACE) & 0x8000);
+		_currKeyPressMap[key] = (GetAsyncKeyState(static_cast<int32_t>(key)) & 0x8000);
 	}
 }
 
