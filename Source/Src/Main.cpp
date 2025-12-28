@@ -7,6 +7,8 @@ enum class ETile
 {
 	EMPTY = 0x00,
 	WALL = 0x01,
+	BODY = 0x02,
+	HEAD = 0x03,
 };
 
 class GameContext
@@ -19,6 +21,8 @@ public:
 		{
 			{ ETile::EMPTY, ' ' },
 			{ ETile::WALL, '#' },
+			{ ETile::BODY, 'o' },
+			{ ETile::HEAD, '@' },
 		};
 
 		for (int y = 0; y < _rowSize; ++y)
@@ -31,6 +35,12 @@ public:
 				}
 			}
 		}
+
+		SetTile(10, 10, ETile::HEAD);
+		SetTile(9, 10, ETile::BODY);
+		SetTile(8, 10, ETile::BODY);
+		SetTile(7, 10, ETile::BODY);
+		SetTile(6, 10, ETile::BODY);
 	}
 
 	virtual ~GameContext() { }
@@ -74,8 +84,8 @@ private:
 	}
 
 private:
-	int32_t _rowSize = 10; // 세로 크기
-	int32_t _colSize = 10; // 가로 크기
+	int32_t _rowSize = 20; // 세로 크기
+	int32_t _colSize = 20; // 가로 크기
 
 	std::vector<ETile> _tiles;
 	std::map<ETile, char> _tileCharMap;
