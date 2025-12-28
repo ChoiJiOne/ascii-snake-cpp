@@ -23,11 +23,13 @@ public:
 
 	DISALLOW_COPY_AND_ASSIGN(GameContext);
 
-	void Render(); // CHECKME: 임시로 있는 것임 (나중에 렌더러가 컨텍스트 참조해서 렌더링할 예정)
-
 	void SetTile(int32_t x, int32_t y, const ETile& tile);
+	void SetDirty(bool isDirty) { _isDirty = isDirty; }
 
 	const ETile& GetTile(int32_t x, int32_t y);
+	const int32_t& GetRowSize() const { return _rowSize; }
+	const int32_t& GetColSize() const { return _colSize; }
+	const std::map<ETile, char>& GetTileCharMap() const { return _tileCharMap; } // TODO: GameRenderer(?)로 이동 예정.
 	bool IsDirty() const { return _isDirty; }
 	bool IsValidTile(int32_t x, int32_t y);
 	bool IsOutline(int32_t x, int32_t y);

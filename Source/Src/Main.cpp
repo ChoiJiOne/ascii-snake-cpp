@@ -1,5 +1,6 @@
 #include "ConsoleManager.h"
 #include "InputManager.h"
+#include "RenderManager.h"
 
 #include "GameContext.h"
 
@@ -7,6 +8,7 @@ int main(void)
 {
 	ConsoleManager::Get().Startup();
 	InputManager::Get().Startup();
+	RenderManager::Get().Startup();
 
 	ConsoleManager::Get().SetVisibleCursor(false);
 	ConsoleManager::Get().SetTitle("Snake");
@@ -58,11 +60,12 @@ int main(void)
 			context.SetTile(x, y, ETile::HEAD);
 		}
 
-		context.Render();
+		RenderManager::Get().Render(&context);
 	}
 
 	ConsoleManager::Get().SetVisibleCursor(true);
 
+	RenderManager::Get().Shutdown();
 	InputManager::Get().Shutdown();
 	ConsoleManager::Get().Shutdown();
 

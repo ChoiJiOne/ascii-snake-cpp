@@ -31,32 +31,6 @@ GameContext::~GameContext()
 {
 }
 
-void GameContext::Render()
-{
-	if (!_isDirty)
-	{
-		return;
-	}
-
-	ConsoleManager::Get().MoveCursor(0, 0);
-
-	for (int y = 0; y < _rowSize; ++y)
-	{
-		for (int x = 0; x < _colSize; ++x)
-		{
-			int32_t offset = y * _colSize + x;
-
-			auto it = _tileCharMap.find(_tiles[offset]);
-			if (it != _tileCharMap.end())
-			{
-				ConsoleManager::Get().Print(x, y, it->second);
-			}
-		}
-	}
-
-	_isDirty = false;
-}
-
 void GameContext::SetTile(int32_t x, int32_t y, const ETile& tile)
 {
 	assert(IsValidTile(x, y));
