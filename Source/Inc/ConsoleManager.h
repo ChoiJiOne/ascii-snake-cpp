@@ -25,7 +25,7 @@ private:
 	friend class IManager<ConsoleManager>;
 
 	const char WHITE_SPACE = ' ';
-	const char CHAR_SIZE = 1;
+	const int32_t CHAR_SIZE = 1;
 
 	ConsoleManager() = default;
 	virtual ~ConsoleManager() = default; // 반드시 Shutdown을 통해 리소스 정리.
