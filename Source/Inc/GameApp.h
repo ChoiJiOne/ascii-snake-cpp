@@ -22,6 +22,9 @@ public:
 	void Shutdown();
 
 private:
+	void UpdateTick();
+
+private:
 	bool _isInitialized = false;
 
 	ConsoleManager* _consoleMgr = nullptr;

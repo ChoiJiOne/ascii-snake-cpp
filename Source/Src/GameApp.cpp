@@ -24,7 +24,7 @@ void GameApp::Startup()
 	_renderMgr->Startup();
 
 	_consoleMgr->SetVisibleCursor(false);
-	_consoleMgr->SetTitle("Snake");
+	_consoleMgr->SetTitle("Snake"); // TODO: 하드 코딩 제거 필요.
 
 	_isInitialized = true;
 }
@@ -41,8 +41,7 @@ void GameApp::Run()
 	bool isDone = false;
 	while (!isDone)
 	{
-		_timer.Tick();
-		_inputMgr->Tick();
+		UpdateTick();
 
 		int32_t newX = x;
 		int32_t newY = y;
@@ -99,4 +98,10 @@ void GameApp::Shutdown()
 	_inputMgr = nullptr;
 	_consoleMgr = nullptr;
 	_isInitialized = false;
+}
+
+void GameApp::UpdateTick()
+{
+	_timer.Tick();
+	_inputMgr->Tick();
 }
