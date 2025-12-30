@@ -1,73 +1,10 @@
-#include "ConsoleManager.h"
-#include "InputManager.h"
-#include "RenderManager.h"
-
-#include "GameContext.h"
+#include "GameApp.h"
 
 int main(void)
 {
-	ConsoleManager::Get().Startup();
-	InputManager::Get().Startup();
-	RenderManager::Get().Startup();
-
-	ConsoleManager::Get().SetVisibleCursor(false);
-	ConsoleManager::Get().SetTitle("Snake");
-
-	GameContext context;
-
-	int32_t x = 10;
-	int32_t y = 10;
-
-	// 임시 테스트용 코드.
-	context.SetTile(x, y, ETile::HEAD);
-
-	bool isDone = false;
-	while (!isDone)
-	{
-		int32_t newX = x;
-		int32_t newY = y;
-
-		InputManager::Get().Tick();
-
-		if (InputManager::Get().GetKeyPress(EKey::LEFT) == EPress::PRESSED)
-		{	
-			newX--;
-		}
-
-		if (InputManager::Get().GetKeyPress(EKey::RIGHT) == EPress::PRESSED)
-		{
-			newX++;
-		}
-
-		if (InputManager::Get().GetKeyPress(EKey::UP) == EPress::PRESSED)
-		{
-			newY--;
-		}
-
-		if (InputManager::Get().GetKeyPress(EKey::DOWN) == EPress::PRESSED)
-		{
-			newY++;
-		}
-
-		if (context.IsValidTile(newX, newY) && !context.IsOutline(newX, newY))
-		{
-			const ETile& tile = context.GetTile(x, y);
-		
-			context.SetTile(x, y, ETile::EMPTY);
-
-			x = newX;
-			y = newY;
-			context.SetTile(x, y, ETile::HEAD);
-		}
-
-		RenderManager::Get().Render(&context);
-	}
-
-	ConsoleManager::Get().SetVisibleCursor(true);
-
-	RenderManager::Get().Shutdown();
-	InputManager::Get().Shutdown();
-	ConsoleManager::Get().Shutdown();
-
+	std::unique_ptr<GameApp> app = std::make_unique<GameApp>();
+	app->Startup();
+	app->Run();
+	app->Shutdown();
 	return 0;
 }
