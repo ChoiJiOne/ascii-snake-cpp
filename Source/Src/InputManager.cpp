@@ -1,6 +1,4 @@
-#include <cassert>
-#include <windows.h>
-
+#include "GameAssert.h"
 #include "InputManager.h"
 
 void InputManager::Startup()
@@ -83,6 +81,6 @@ EPress InputManager::GetKeyPress(const EKey& key)
 bool InputManager::IsPressKey(const std::map<EKey, bool>& keyPressMap, const EKey& key)
 {
 	auto it = keyPressMap.find(key);
-	assert(it != keyPressMap.end());
+	GAME_CHECK(it != keyPressMap.end());
 	return it->second;
 }

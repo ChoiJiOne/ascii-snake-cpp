@@ -1,6 +1,5 @@
-#include <cassert>
-
 #include "ConsoleManager.h"
+#include "GameAssert.h"
 #include "GameContext.h"
 
 GameContext::GameContext()
@@ -33,7 +32,7 @@ GameContext::~GameContext()
 
 void GameContext::SetTile(int32_t x, int32_t y, const ETile& tile)
 {
-	assert(IsValidTile(x, y));
+	GAME_CHECK(IsValidTile(x, y));
 
 	int32_t offset = y * _colSize + x;
 	if (_tiles[offset] == tile)
@@ -47,7 +46,7 @@ void GameContext::SetTile(int32_t x, int32_t y, const ETile& tile)
 
 const ETile& GameContext::GetTile(int32_t x, int32_t y)
 {
-	assert(IsValidTile(x, y));
+	GAME_CHECK(IsValidTile(x, y));
 
 	int32_t offset = y * _colSize + x;
 	return _tiles[offset];

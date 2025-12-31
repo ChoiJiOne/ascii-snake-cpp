@@ -11,5 +11,5 @@ void ErrorUtils::ReportAssertion(const char* expression, const char* file, uint3
 		message += StringUtils::PrintF("\nDescription: %s\n", description.c_str());
 	}
 
-	MessageBoxA(nullptr, message.c_str(), "REPORT ASSERTION", MB_ICONERROR | MB_OK);
+	::MessageBoxA(nullptr, message.c_str(), "REPORT ASSERTION", MB_ICONERROR | MB_OK);
 }
