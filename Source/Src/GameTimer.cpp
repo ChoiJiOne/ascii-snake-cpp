@@ -12,7 +12,7 @@ GameTimer::GameTimer()
 	, _currTime(0)
 	, _bIsStopped(false)
 {
-	int64_t countsPerSec;
+	int64_t countsPerSec = 0LL;
 	assert(QueryPerformanceFrequency(reinterpret_cast<LARGE_INTEGER*>(&countsPerSec)));
 	_secondsPerCount = 1.0 / static_cast<double>(countsPerSec);
 }
@@ -54,7 +54,7 @@ float GameTimer::GetDeltaSeconds() const
 
 void GameTimer::Reset()
 {
-	int64_t currTime;
+	int64_t currTime = 0LL;
 	assert(QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&currTime)));
 
 	_baseTime = currTime;
@@ -70,7 +70,7 @@ void GameTimer::Start()
 		return;
 	}
 
-	int64_t startTime;
+	int64_t startTime = 0LL;
 	assert(QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&startTime)));
 
 	_pausedTime += (startTime - _stopTime);
@@ -87,7 +87,7 @@ void GameTimer::Stop()
 		return;
 	}
 
-	int64_t currTime;
+	int64_t currTime = 0LL;
 	assert(QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&currTime)));
 
 	_stopTime = currTime;
@@ -102,7 +102,7 @@ void GameTimer::Tick()
 		return;
 	}
 
-	int64_t currTime;
+	int64_t currTime = 0LL;
 	assert(QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&currTime)));
 	_currTime = currTime;
 
