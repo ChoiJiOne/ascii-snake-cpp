@@ -21,12 +21,12 @@ GameContext::~GameContext()
 {
 }
 
-void GameContext::SetTile(int32_t x, int32_t y, const ETile& tile)
+void GameContext::SetTile(int32_t x, int32_t y, const ETile& tile, bool bForceSet)
 {
 	GAME_CHECK(IsValidTile(x, y));
 
 	int32_t offset = y * _colSize + x;
-	if (_tiles[offset] == tile)
+	if (!bForceSet && _tiles[offset] == tile)
 	{
 		return;
 	}
@@ -142,11 +142,11 @@ void GameContext::Swap(int32_t srcX, int32_t srcY, int32_t dstX, int32_t dstY)
 		return;
 	}
 
-	const ETile& srcTile = GetTile(srcX, srcY);
-	const ETile& dstTile = GetTile(dstX, dstY);
+	ETile srcTile = GetTile(srcX, srcY);
+	ETile dstTile = GetTile(dstX, dstY);
 
-	SetTile(dstX, dstY, srcTile);
-	SetTile(srcX, srcY, dstTile);
+	SetTile(dstX, dstY, srcTile, true);
+	SetTile(srcX, srcY, dstTile, true);
 }
 
 void GameContext::Swap(const Position& srcPosition, const Position& dstPosition)
@@ -171,7 +171,7 @@ bool GameContext::CanMove(const Position& position, const EMoveDirection& moveDi
 }
 
 // TODO: CanMove / Move 반복되는 부분 정리 필요.
-void GameContext::Move(int32_t x, int32_t y, const EMoveDirection& moveDirection)
+void GameContext::Move(int32_t& x, int32_t& y, const EMoveDirection& moveDirection)
 {
 	if (!CanMove(x, y, moveDirection))
 	{
@@ -185,9 +185,11 @@ void GameContext::Move(int32_t x, int32_t y, const EMoveDirection& moveDirection
 	moveY += moveDirection == EMoveDirection::UP ? -1 : moveDirection == EMoveDirection::DOWN ? 1 : 0;
 
 	MoveTo(x, y, moveX, moveY);
+	x = moveX;
+	y = moveY;
 }
 
-void GameContext::Move(const Position& position, const EMoveDirection& moveDirection)
+void GameContext::Move(Position& position, const EMoveDirection& moveDirection)
 {
 	Move(position.x, position.y, moveDirection);
 }

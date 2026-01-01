@@ -39,7 +39,7 @@ public:
 
 	DISALLOW_COPY_AND_ASSIGN(GameContext);
 
-	void SetTile(int32_t x, int32_t y, const ETile& tile);
+	void SetTile(int32_t x, int32_t y, const ETile& tile, bool bForceSet = false);
 	void SetTile(const Position& position, const ETile& tile);
 	void SetDirty(bool isDirty) { _isDirty = isDirty; }
 
@@ -65,8 +65,8 @@ public:
 	
 	bool CanMove(int32_t x, int32_t y, const EMoveDirection& moveDirection);
 	bool CanMove(const Position& position, const EMoveDirection& moveDirection);
-	void Move(int32_t x, int32_t y, const EMoveDirection& moveDirection);
-	void Move(const Position& position, const EMoveDirection& moveDirection);
+	void Move(int32_t& x, int32_t& y, const EMoveDirection& moveDirection);
+	void Move(Position& position, const EMoveDirection& moveDirection);
 
 private:
 	bool _isDirty = false;

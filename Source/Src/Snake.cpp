@@ -1,5 +1,6 @@
 #include "ConsoleManager.h"
 #include "GameAssert.h"
+#include "InputManager.h"
 #include "Snake.h"
 
 Snake::Snake(GameContext* context, int32_t defaultBodyCount, EMoveDirection defaultMoveDirection)
@@ -7,6 +8,18 @@ Snake::Snake(GameContext* context, int32_t defaultBodyCount, EMoveDirection defa
 {
 	GAME_CHECK(context != nullptr);
 	_context = context;
+
+	_inputMgr = InputManager::GetPtr();
+	GAME_CHECK(_inputMgr != nullptr);
+		
+	_keyDirectionMap =
+	{
+		{ EKey::NONE,  EMoveDirection::NONE },
+		{ EKey::LEFT,  EMoveDirection::LEFT},
+		{ EKey::RIGHT, EMoveDirection::RIGHT},
+		{ EKey::UP,    EMoveDirection::UP },
+		{ EKey::DOWN,  EMoveDirection::DOWN},
+	};
 
 	_head = { _context->GetColSize() / 2, _context->GetRowSize() / 2};
 	_context->SetTile(_head, ETile::HEAD);
@@ -31,6 +44,30 @@ Snake::~Snake() {}
 
 void Snake::Tick(float deltaSeconds)
 {
+	bool isPress = false;
+	for (const auto& keyDirection : _keyDirectionMap)
+	{
+		const EKey& key = keyDirection.first;
+		const EMoveDirection& moveDirection = keyDirection.second;
+
+		if (_inputMgr->GetKeyPress(key) == EPress::PRESSED) //  && _moveDirection != moveDirection
+		{
+			isPress = true;
+			_moveDirection = moveDirection;
+		}
+	}
+
+	if (isPress && _context->CanMove(_head, _moveDirection))
+	{
+		Position cacheHead = _head;
+		_context->Move(_head, _moveDirection);
+
+		Position tail = _bodys.back();
+		_bodys.pop_back();
+		_bodys.push_front(cacheHead);
+
+		_context->Swap(tail, cacheHead);
+	}
 }
 
 void Snake::Render()

@@ -1,6 +1,7 @@
 #pragma once
 
-#include <list>
+#include <deque>
+#include <map>
 
 #include "IActor.h"
 #include "GameContext.h"
@@ -19,9 +20,11 @@ public:
 
 private:
 	GameContext* _context;
+	InputManager* _inputMgr = nullptr;
 
 	EMoveDirection _moveDirection = EMoveDirection::RIGHT;
+	std::map<EKey, EMoveDirection> _keyDirectionMap;
 
 	Position _head = { 0, 0 };
-	std::list<Position> _bodys;
+	std::deque<Position> _bodys;
 };
