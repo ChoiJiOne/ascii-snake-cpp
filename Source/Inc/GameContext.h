@@ -15,6 +15,15 @@ enum class ETile
 	FOOD = 0x04,
 };
 
+enum class EMoveDirection
+{
+	NONE = 0x00,
+	LEFT = 0x01,
+	RIGHT = 0x02,
+	UP = 0x03,
+	DOWN = 0x04,
+};
+
 class GameContext
 {
 public:
@@ -37,6 +46,8 @@ public:
 	void MoveTo(int32_t srcX, int32_t srcY, int32_t dstX, int32_t dstY);
 	bool CanSwap(int32_t srcX, int32_t srcY, int32_t dstX, int32_t dstY);
 	void Swap(int32_t srcX, int32_t srcY, int32_t dstX, int32_t dstY);
+	bool CanMove(int32_t x, int32_t y, const EMoveDirection& moveDirection);
+	void Move(int32_t x, int32_t y, const EMoveDirection& moveDirection);
 
 private:
 	bool _isDirty = false;

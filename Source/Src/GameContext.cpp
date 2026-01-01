@@ -113,3 +113,31 @@ void GameContext::Swap(int32_t srcX, int32_t srcY, int32_t dstX, int32_t dstY)
 	SetTile(dstX, dstY, srcTile);
 	SetTile(srcX, srcY, dstTile);
 }
+
+bool GameContext::CanMove(int32_t x, int32_t y, const EMoveDirection& moveDirection)
+{
+	int32_t moveX = x;
+	int32_t moveY = y;
+
+	moveX += moveDirection == EMoveDirection::LEFT ? -1 : moveDirection == EMoveDirection::RIGHT ? 1 : 0;
+	moveY += moveDirection == EMoveDirection::UP ? -1 : moveDirection == EMoveDirection::DOWN ? 1 : 0;
+
+	return CanMoveTo(x, y, moveX, moveY);
+}
+
+// TODO: CanMove / Move 반복되는 부분 정리 필요.
+void GameContext::Move(int32_t x, int32_t y, const EMoveDirection& moveDirection)
+{
+	if (!CanMove(x, y, moveDirection))
+	{
+		return;
+	}
+
+	int32_t moveX = x;
+	int32_t moveY = y;
+
+	moveX += moveDirection == EMoveDirection::LEFT ? -1 : moveDirection == EMoveDirection::RIGHT ? 1 : 0;
+	moveY += moveDirection == EMoveDirection::UP ? -1 : moveDirection == EMoveDirection::DOWN ? 1 : 0;
+
+	MoveTo(x, y, moveX, moveY);
+}
