@@ -40,20 +40,7 @@ Snake::~Snake() {}
 
 void Snake::Tick(float deltaSeconds)
 {
-	bool isPress = false;
-	for (const auto& keyDirection : _keyDirectionMap)
-	{
-		const EKey& key = keyDirection.first;
-		const EMoveDirection& direction = keyDirection.second;
-
-		if (_inputMgr->GetKeyPress(key) == EPress::PRESSED) //  && _moveDirection != moveDirection
-		{
-			isPress = true;
-			_moveDirection = direction;
-		}
-	}
-
-	if (!isPress)
+	if (!UpdateMoveDirection())
 	{
 		return;
 	}
@@ -85,6 +72,24 @@ void Snake::AddBody(const Position& position)
 
 	_bodys.push_back(position);
 	_context->SetTile(position, ETile::BODY);
+}
+
+bool Snake::UpdateMoveDirection()
+{
+	bool isUpdate = false;
+	for (const auto& keyDirection : _keyDirectionMap)
+	{
+		const EKey& key = keyDirection.first;
+		const EMoveDirection& direction = keyDirection.second;
+
+		if (_inputMgr->GetKeyPress(key) == EPress::PRESSED) //  && _moveDirection != moveDirection
+		{
+			isUpdate = true;
+			_moveDirection = direction;
+		}
+	}
+
+	return isUpdate;
 }
 
 void Snake::Move()
