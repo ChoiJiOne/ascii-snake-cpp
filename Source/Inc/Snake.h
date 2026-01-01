@@ -20,6 +20,7 @@ public:
 
 private:
 	void AddBody(const Position& position);
+	void Move();
 
 private:
 	GameContext* _context = nullptr;

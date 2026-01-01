@@ -44,12 +44,12 @@ void Snake::Tick(float deltaSeconds)
 	for (const auto& keyDirection : _keyDirectionMap)
 	{
 		const EKey& key = keyDirection.first;
-		const EMoveDirection& moveDirection = keyDirection.second;
+		const EMoveDirection& direction = keyDirection.second;
 
 		if (_inputMgr->GetKeyPress(key) == EPress::PRESSED) //  && _moveDirection != moveDirection
 		{
 			isPress = true;
-			_moveDirection = moveDirection;
+			_moveDirection = direction;
 		}
 	}
 
@@ -58,24 +58,7 @@ void Snake::Tick(float deltaSeconds)
 		return;
 	}
 
-	Position cacheHead = _head;
-	EMoveResult result = _context->Move(_head, _moveDirection);
-	if (result == EMoveResult::BLOCKED)
-	{
-		return;
-	}
-
-	Position tail = _bodys.back();
-	_bodys.pop_back();
-	_bodys.push_front(cacheHead);
-
-	_context->Swap(tail, cacheHead);
-
-	if (result == EMoveResult::CONSUME)
-	{
-		_bodys.push_back(tail);
-		_context->SetTile(tail, ETile::BODY);
-	}
+	Move();
 }
 
 void Snake::Render()
@@ -102,4 +85,26 @@ void Snake::AddBody(const Position& position)
 
 	_bodys.push_back(position);
 	_context->SetTile(position, ETile::BODY);
+}
+
+void Snake::Move()
+{
+	Position cacheHead = _head;
+	EMoveResult result = _context->Move(_head, _moveDirection);
+	if (result == EMoveResult::BLOCKED)
+	{
+		return;
+	}
+
+	Position tail = _bodys.back();
+	_bodys.pop_back();
+	_bodys.push_front(cacheHead);
+
+	_context->Swap(tail, cacheHead);
+
+	if (result == EMoveResult::CONSUME)
+	{
+		_bodys.push_back(tail);
+		_context->SetTile(tail, ETile::BODY);
+	}
 }
