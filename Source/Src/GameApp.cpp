@@ -2,6 +2,7 @@
 #include "GameAssert.h"
 
 #include "ContextView.h"
+#include "Snake.h"
 
 GameApp::~GameApp()
 {
@@ -32,15 +33,18 @@ void GameApp::Startup()
 	_consoleMgr->SetTitle("Snake"); // TODO: 하드 코딩 제거 필요.
 
 	IActor* contextView = _actorMgr->Create<ContextView>(&_context);
+	IActor* snake = _actorMgr->Create<Snake>(&_context);
 
 	_updateActors = 
 	{
+		snake,
 		contextView,
 	};
 
 	_renderActors =
 	{
 		contextView,
+		snake,
 	};
 
 	_isInitialized = true;
