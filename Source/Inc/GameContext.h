@@ -24,6 +24,13 @@ enum class EMoveDirection
 	DOWN = 0x04,
 };
 
+// CHECKME: 나중에 하는 일 많아지면 class로 변경!
+struct Position
+{
+	int32_t x;
+	int32_t y;
+};
+
 class GameContext
 {
 public:
@@ -33,21 +40,33 @@ public:
 	DISALLOW_COPY_AND_ASSIGN(GameContext);
 
 	void SetTile(int32_t x, int32_t y, const ETile& tile);
+	void SetTile(const Position& position, const ETile& tile);
 	void SetDirty(bool isDirty) { _isDirty = isDirty; }
 
 	const ETile& GetTile(int32_t x, int32_t y);
+	const ETile& GetTile(const Position& position);
 	const int32_t& GetRowSize() const { return _rowSize; }
 	const int32_t& GetColSize() const { return _colSize; }
 	bool IsDirty() const { return _isDirty; }
 	bool IsValidTile(int32_t x, int32_t y);
+	bool IsValidTile(const Position& position);
 	bool IsOutline(int32_t x, int32_t y);
+	bool IsOutline(const Position& position);
 
 	bool CanMoveTo(int32_t srcX, int32_t srcY, int32_t dstX, int32_t dstY);
+	bool CanMoveTo(const Position& srcPosition, const Position& dstPosition);
 	void MoveTo(int32_t srcX, int32_t srcY, int32_t dstX, int32_t dstY);
+	void MoveTo(const Position& srcPosition, const Position& dstPosition);
+
 	bool CanSwap(int32_t srcX, int32_t srcY, int32_t dstX, int32_t dstY);
+	bool CanSwap(const Position& srcPosition, const Position& dstPosition);
 	void Swap(int32_t srcX, int32_t srcY, int32_t dstX, int32_t dstY);
+	void Swap(const Position& srcPosition, const Position& dstPosition);
+	
 	bool CanMove(int32_t x, int32_t y, const EMoveDirection& moveDirection);
+	bool CanMove(const Position& position, const EMoveDirection& moveDirection);
 	void Move(int32_t x, int32_t y, const EMoveDirection& moveDirection);
+	void Move(const Position& position, const EMoveDirection& moveDirection);
 
 private:
 	bool _isDirty = false;

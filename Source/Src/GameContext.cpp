@@ -35,6 +35,11 @@ void GameContext::SetTile(int32_t x, int32_t y, const ETile& tile)
 	_isDirty = true;
 }
 
+void GameContext::SetTile(const Position& position, const ETile& tile)
+{
+	return SetTile(position.x, position.y, tile);
+}
+
 const ETile& GameContext::GetTile(int32_t x, int32_t y)
 {
 	GAME_CHECK(IsValidTile(x, y));
@@ -43,14 +48,29 @@ const ETile& GameContext::GetTile(int32_t x, int32_t y)
 	return _tiles[offset];
 }
 
+const ETile& GameContext::GetTile(const Position& position)
+{
+	return GetTile(position.x, position.y);
+}
+
 bool GameContext::IsOutline(int32_t x, int32_t y)
 {
 	return (x <= 0 || x >= _colSize - 1) || (y <= 0 || y >= _rowSize - 1);
 }
 
+bool GameContext::IsOutline(const Position& position)
+{
+	return IsOutline(position.x, position.y);
+}
+
 bool GameContext::IsValidTile(int32_t x, int32_t y)
 {
 	return (0 <= x && x <= _colSize - 1) && (0 <= y && y <= _rowSize - 1);
+}
+
+bool GameContext::IsValidTile(const Position& position)
+{
+	return IsValidTile(position.x, position.y);
 }
 
 bool GameContext::CanMoveTo(int32_t srcX, int32_t srcY, int32_t dstX, int32_t dstY)
@@ -76,6 +96,11 @@ bool GameContext::CanMoveTo(int32_t srcX, int32_t srcY, int32_t dstX, int32_t ds
 	return bCanMove;
 }
 
+bool GameContext::CanMoveTo(const Position& srcPosition, const Position& dstPosition)
+{
+	return CanMoveTo(srcPosition.x, srcPosition.y, dstPosition.x, dstPosition.y);
+}
+
 void GameContext::MoveTo(int32_t srcX, int32_t srcY, int32_t dstX, int32_t dstY)
 {
 	if (!CanMoveTo(srcX, srcY, dstX, dstY))
@@ -90,6 +115,11 @@ void GameContext::MoveTo(int32_t srcX, int32_t srcY, int32_t dstX, int32_t dstY)
 	SetTile(srcX, srcY, ETile::EMPTY);
 }
 
+void GameContext::MoveTo(const Position& srcPosition, const Position& dstPosition)
+{
+	MoveTo(srcPosition.x, srcPosition.y, dstPosition.x, dstPosition.y);
+}
+
 bool GameContext::CanSwap(int32_t srcX, int32_t srcY, int32_t dstX, int32_t dstY)
 {
 	if (!IsValidTile(srcX, srcY) || IsOutline(srcX, srcY) || !IsValidTile(dstX, dstY) || IsOutline(dstX, dstY))
@@ -98,6 +128,11 @@ bool GameContext::CanSwap(int32_t srcX, int32_t srcY, int32_t dstX, int32_t dstY
 	}
 
 	return true;
+}
+
+bool GameContext::CanSwap(const Position& srcPosition, const Position& dstPosition)
+{
+	return CanSwap(srcPosition.x, srcPosition.y, dstPosition.x, dstPosition.y);
 }
 
 void GameContext::Swap(int32_t srcX, int32_t srcY, int32_t dstX, int32_t dstY)
@@ -114,6 +149,11 @@ void GameContext::Swap(int32_t srcX, int32_t srcY, int32_t dstX, int32_t dstY)
 	SetTile(srcX, srcY, dstTile);
 }
 
+void GameContext::Swap(const Position& srcPosition, const Position& dstPosition)
+{
+	Swap(srcPosition.x, srcPosition.y, dstPosition.x, dstPosition.y);
+}
+
 bool GameContext::CanMove(int32_t x, int32_t y, const EMoveDirection& moveDirection)
 {
 	int32_t moveX = x;
@@ -123,6 +163,11 @@ bool GameContext::CanMove(int32_t x, int32_t y, const EMoveDirection& moveDirect
 	moveY += moveDirection == EMoveDirection::UP ? -1 : moveDirection == EMoveDirection::DOWN ? 1 : 0;
 
 	return CanMoveTo(x, y, moveX, moveY);
+}
+
+bool GameContext::CanMove(const Position& position, const EMoveDirection& moveDirection)
+{
+	return CanMove(position.x, position.y, moveDirection);
 }
 
 // TODO: CanMove / Move 반복되는 부분 정리 필요.
@@ -140,4 +185,9 @@ void GameContext::Move(int32_t x, int32_t y, const EMoveDirection& moveDirection
 	moveY += moveDirection == EMoveDirection::UP ? -1 : moveDirection == EMoveDirection::DOWN ? 1 : 0;
 
 	MoveTo(x, y, moveX, moveY);
+}
+
+void GameContext::Move(const Position& position, const EMoveDirection& moveDirection)
+{
+	Move(position.x, position.y, moveDirection);
 }
