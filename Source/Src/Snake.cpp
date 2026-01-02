@@ -123,13 +123,11 @@ EMoveResult Snake::Move()
 	Position tail = _bodys.back();
 	_bodys.pop_back();
 	_bodys.push_front(cacheHead);
-
 	_context->Swap(tail, cacheHead);
 
 	if (result == EMoveResult::CONSUME)
 	{
-		_bodys.push_back(tail);
-		_context->SetTile(tail, ETile::BODY);
+		AddBody(tail);
 	}
 
 	return result;
