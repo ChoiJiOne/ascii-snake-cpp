@@ -1,14 +1,19 @@
+#include "ConsoleManager.h"
 #include "GameAssert.h"
 #include "Food.h"
 #include "MathUtils.h"
+#include "StringUtils.h"
 
 Food::Food(GameContext* context)
 {
 	GAME_CHECK(context != nullptr);
 	_context = context;
+	_consoleMgr = ConsoleManager::GetPtr();
 
 	_minPosition = { 1, 1 };
 	_maxPosition = { _context->GetColSize() - 2, _context->GetRowSize() - 2 };
+
+	_countViewPosition = { 22, 3 };
 
 	Spawn();
 
@@ -29,6 +34,12 @@ void Food::Tick(float deltaSeconds)
 
 void Food::Render()
 {
+	if (!_isDirty)
+	{
+		return;
+	}
+
+	_consoleMgr->Print(_countViewPosition.x, _countViewPosition.y, StringUtils::PrintF("FOOD: %3d", _count - 1));
 }
 
 void Food::Release()
@@ -51,6 +62,8 @@ void Food::Spawn()
 
 	_position = GetValidRandomPosition();
 	_context->SetTile(_position, ETile::FOOD);
+	_isDirty = true;
+	_count++;
 }
 
 Position Food::GetValidRandomPosition() const

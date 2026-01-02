@@ -3,6 +3,8 @@
 #include "IActor.h"
 #include "GameContext.h"
 
+class ConsoleManager;
+
 class Food : public IActor
 {
 public:
@@ -21,9 +23,14 @@ private:
 
 private:
 	GameContext* _context = nullptr;
+	ConsoleManager* _consoleMgr = nullptr;
 
 	Position _minPosition = { 0, 0 };
 	Position _maxPosition = { 0, 0 };
 
 	Position _position = { 0, 0 };
+	
+	Position _countViewPosition = { 0, 0 };
+	bool _isDirty = false;
+	int32_t _count = 0;
 };
