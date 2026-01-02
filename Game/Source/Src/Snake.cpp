@@ -15,7 +15,6 @@ Snake::Snake(GameContext* context, int32_t defaultBodyCount, EMoveDirection defa
 		
 	_keyDirectionMap =
 	{
-		{ EKey::NONE,  EMoveDirection::NONE },
 		{ EKey::LEFT,  EMoveDirection::LEFT},
 		{ EKey::RIGHT, EMoveDirection::RIGHT},
 		{ EKey::UP,    EMoveDirection::UP },
