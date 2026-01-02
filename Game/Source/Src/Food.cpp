@@ -40,6 +40,7 @@ void Food::Render()
 	}
 
 	_consoleMgr->Print(_countViewPosition.x, _countViewPosition.y, StringUtils::PrintF("FOOD: %3d", _count - 1));
+	_isDirty = false;
 }
 
 void Food::Release()
