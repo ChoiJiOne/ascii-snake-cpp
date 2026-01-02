@@ -1,7 +1,4 @@
-#include <cassert>
-
 #include "ConsoleManager.h"
-#include "GameContext.h"
 #include "RenderManager.h"
 
 void RenderManager::Startup()
