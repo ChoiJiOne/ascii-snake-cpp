@@ -2,6 +2,13 @@
 
 #include <cstdint>
 
+enum class EScoreState
+{
+	BELOW_MIN = 0x00,
+	IN_RANGE = 0x01,
+	ABOVE_MAX = 0x02,
+};
+
 class LevelInfo
 {
 public:
@@ -13,9 +20,11 @@ public:
 	LevelInfo& operator=(const LevelInfo& instance) noexcept;
 
 	const int32_t& GetLevel() const { return _level; }
-	const int32_t& GetMinGoal() const { return _minScore; }
-	const int32_t& GetMaxGoal() const { return _maxScore; }
+	const int32_t& GetMinScore() const { return _minScore; }
+	const int32_t& GetMaxScore() const { return _maxScore; }
 	const float& GetIntervalTime() const { return _intervalTime; }
+
+	EScoreState GetScoreState(int32_t score);
 
 private:
 	int32_t _level = 0;

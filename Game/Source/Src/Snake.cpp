@@ -33,6 +33,9 @@ Snake::Snake(GameContext* context, int32_t defaultBodyCount, EMoveDirection defa
 		AddBody(position);
 	}
 
+	const LevelInfo& levelInfo = _context->GetCurrentLevelInfo();
+	_moveIntervalTime = levelInfo.GetIntervalTime();
+
 	_isInitialized = true;
 }
 

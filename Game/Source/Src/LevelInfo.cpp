@@ -4,7 +4,7 @@
 
 LevelInfo::LevelInfo(int32_t level, int32_t minScore, int32_t maxScore, float intervalTime)
 {
-	GAME_CHECK(_level >= 1);
+	GAME_CHECK(level >= 1);
 	_level = level;
 
 	GAME_CHECK(minScore != maxScore);
@@ -53,4 +53,20 @@ LevelInfo& LevelInfo::operator=(const LevelInfo& instance) noexcept
 	_intervalTime = instance._intervalTime;
 
 	return *this;
+}
+
+EScoreState LevelInfo::GetScoreState(int32_t score)
+{
+	if (score < _minScore)
+	{
+		return EScoreState::BELOW_MIN;
+	}
+	else if (_minScore <= score && score < _maxScore)
+	{
+		return EScoreState::IN_RANGE;
+	}
+	else
+	{
+		return EScoreState::ABOVE_MAX;
+	}
 }

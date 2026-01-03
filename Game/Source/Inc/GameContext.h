@@ -78,6 +78,8 @@ public:
 	EMoveResult Move(int32_t& x, int32_t& y, const EMoveDirection& moveDirection, bool bKeepSrc = false);
 	EMoveResult Move(Position& position, const EMoveDirection& moveDirection, bool bKeepSrc = false);
 
+	const LevelInfo& GetCurrentLevelInfo();
+
 private:
 	bool _isDirty = false;
 
@@ -86,6 +88,8 @@ private:
 
 	std::vector<ETile> _tiles;
 
-	int32_t _level = 1;
+	int32_t _minLevel = 0;
+	int32_t _maxLevel = 0;
+	int32_t _level = 0;
 	std::vector<LevelInfo> _levelInfos;
 };

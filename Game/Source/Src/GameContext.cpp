@@ -27,6 +27,10 @@ GameContext::GameContext()
 		LevelInfo(/*LEVEL*/ 6, /*MIN*/ 25, /*MAX*/ 30, /*INTERVAL*/ 0.2f),
 		LevelInfo(/*LEVEL*/ 7, /*MIN*/ 30, /*MAX*/ 35, /*INTERVAL*/ 0.1f),
 	};
+
+	_minLevel = _levelInfos.front().GetLevel();
+	_maxLevel = _levelInfos.back().GetLevel();
+	_level = _minLevel;
 }
 
 GameContext::~GameContext()
@@ -224,4 +228,18 @@ EMoveResult GameContext::Move(int32_t& x, int32_t& y, const EMoveDirection& move
 EMoveResult GameContext::Move(Position& position, const EMoveDirection& moveDirection, bool bKeepSrc)
 {
 	return Move(position.x, position.y, moveDirection, bKeepSrc);
+}
+
+const LevelInfo& GameContext::GetCurrentLevelInfo()
+{
+	for (const auto& levelInfo : _levelInfos)
+	{
+		if (levelInfo.GetLevel() == _level)
+		{
+			return levelInfo;
+		}
+	}
+
+	// 만약 찾지 못했으면 가장 마지막 요소 반환.
+	return _levelInfos.back();
 }
