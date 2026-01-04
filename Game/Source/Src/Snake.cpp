@@ -141,6 +141,12 @@ EMoveResult Snake::Move()
 
 	if (result == EMoveResult::CONSUME)
 	{
+		if (!_context->TrySpawnFood())
+		{
+			_isDead = true; // NOTE: 먹이를 더 이상 생성할 수 없는 상황이라면 강제 GAME OVER.
+			return result;
+		}
+
 		if (_context->TryLevelUp())
 		{
 			const LevelInfo& levelInfo = _context->GetCurrentLevelInfo();

@@ -10,9 +10,7 @@ Food::Food(GameContext* context)
 	_context = context;
 	_consoleMgr = ConsoleManager::GetPtr();
 
-	_context->TrySpawnFood(_position); // CHECKME: 이거 실패했을 때 처리 필요한 지 확인 필요.
-	_count = _context->GetSpawnedFoodCount();
-	_isDirty = true; // CHECKME: 이거 없으면 0개일 때 표시 안함.
+	_context->TrySpawnFood();
 
 	_countViewPosition = { 22, 3 };
 	_isInitialized = true;
@@ -22,16 +20,10 @@ Food::~Food() {}
 
 void Food::Tick(float deltaSeconds)
 {
-	const ETile& tile = _context->GetTile(_position);
-	if (tile != ETile::FOOD)
+	int32_t count = _context->GetSpawnedFoodCount();
+	if (_count != count)
 	{
-		if (!_context->TrySpawnFood(_position))
-		{
-			// TODO: 여기에 게임 오버 처리 필요.
-			return;
-		}
-		
-		_count = _context->GetSpawnedFoodCount();
+		_count = count;
 		_isDirty = true;
 	}
 }

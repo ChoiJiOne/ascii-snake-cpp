@@ -96,15 +96,15 @@ bool GameContext::HasEmptyTile() const
 	return false;
 }
 
-bool GameContext::TrySpawnFood(Position& outFoodPosition)
+bool GameContext::TrySpawnFood()
 {
 	if (!HasEmptyTile())
 	{
 		return false;
 	}
 
-	outFoodPosition = GetRandomEmptyPosition();
-	SetTile(outFoodPosition, ETile::FOOD);
+	Position foodPosition = GetRandomEmptyPosition();
+	SetTile(foodPosition, ETile::FOOD);
 	_spawnedFoodCount++;
 
 	return true;

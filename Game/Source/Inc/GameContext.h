@@ -64,7 +64,7 @@ public:
 	bool HasEmptyTile() const;
 	const int32_t& GetSpawnedFoodCount() const { return _spawnedFoodCount; }
 
-	bool TrySpawnFood(Position& outFoodPosition);
+	bool TrySpawnFood();
 
 	bool CanMoveTo(int32_t srcX, int32_t srcY, int32_t dstX, int32_t dstY);
 	bool CanMoveTo(const Position& srcPosition, const Position& dstPosition);
