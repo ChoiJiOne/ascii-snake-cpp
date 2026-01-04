@@ -29,7 +29,8 @@ private:
 	GameContext* _context = nullptr;
 	InputManager* _inputMgr = nullptr;
 
-	EMoveDirection _moveDirection = EMoveDirection::RIGHT;
+	EMoveDirection _prevMoveDirection = EMoveDirection::NONE;
+	EMoveDirection _currMoveDirection = EMoveDirection::RIGHT;
 	std::map<EKey, EMoveDirection> _keyDirectionMap;
 
 	Position _head = { 0, 0 };

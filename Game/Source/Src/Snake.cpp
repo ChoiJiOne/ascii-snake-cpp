@@ -4,7 +4,8 @@
 #include "Snake.h"
 
 Snake::Snake(GameContext* context, int32_t defaultBodyCount, EMoveDirection defaultMoveDirection, float moveIntervalTime)
-	: _moveDirection(defaultMoveDirection)
+	: _prevMoveDirection(defaultMoveDirection)
+	, _currMoveDirection(defaultMoveDirection)
 	, _moveIntervalTime(moveIntervalTime)
 {
 	GAME_CHECK(context != nullptr);
@@ -27,8 +28,8 @@ Snake::Snake(GameContext* context, int32_t defaultBodyCount, EMoveDirection defa
 	for (int32_t count = 1; count <= defaultBodyCount; ++count)
 	{
 		Position position = _head;
-		position.x += (_moveDirection == EMoveDirection::LEFT) ? count : (_moveDirection == EMoveDirection::RIGHT) ? -count : 0;
-		position.y += (_moveDirection == EMoveDirection::DOWN) ? count : (_moveDirection == EMoveDirection::UP) ? -count : 0;
+		position.x += (_currMoveDirection == EMoveDirection::LEFT) ? count : (_currMoveDirection == EMoveDirection::RIGHT) ? -count : 0;
+		position.y += (_currMoveDirection == EMoveDirection::DOWN) ? count : (_currMoveDirection == EMoveDirection::UP) ? -count : 0;
 
 		AddBody(position);
 	}
@@ -61,10 +62,23 @@ void Snake::Tick(float deltaSeconds)
 		{
 			_isDead = true;
 		}
+		else
+		{
+			_moveElapsedTime = 0.0f;
+		}
 		return;
 	}
 
-	Move();
+	EMoveResult result = Move();
+	if (result == EMoveResult::BLOCKED)
+	{
+		_currMoveDirection = _prevMoveDirection; // NOTE: 해당 뱡향으로 움직일 수 없으므로, 복원.
+	}
+	else
+	{
+		_moveElapsedTime = 0.0f;
+		_prevMoveDirection = _currMoveDirection;
+	}
 }
 
 void Snake::Render()
@@ -101,10 +115,10 @@ bool Snake::UpdateMoveDirection()
 		const EKey& key = keyDirection.first;
 		const EMoveDirection& direction = keyDirection.second;
 
-		if (_inputMgr->GetKeyPress(key) == EPress::PRESSED  && _moveDirection != direction)
+		if (_inputMgr->GetKeyPress(key) == EPress::PRESSED  && _currMoveDirection != direction)
 		{
 			isUpdate = true;
-			_moveDirection = direction;
+			_currMoveDirection = direction;
 		}
 	}
 
@@ -113,10 +127,8 @@ bool Snake::UpdateMoveDirection()
 
 EMoveResult Snake::Move()
 {
-	_moveElapsedTime = 0.0f;
-
 	Position cacheHead = _head;
-	EMoveResult result = _context->Move(_head, _moveDirection);
+	EMoveResult result = _context->Move(_head, _currMoveDirection);
 	if (result == EMoveResult::BLOCKED)
 	{
 		return result;
