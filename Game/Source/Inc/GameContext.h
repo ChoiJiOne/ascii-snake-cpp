@@ -51,12 +51,14 @@ public:
 	void SetTile(int32_t x, int32_t y, const ETile& tile, bool bForceSet = false);
 	void SetTile(const Position& position, const ETile& tile);
 	void SetDirty(bool isDirty) { _isDirty = isDirty; }
-
+	void SetGameOver(bool isGameOver) { _isGameOver = isGameOver; }
+	
 	const ETile& GetTile(int32_t x, int32_t y) const;
 	const ETile& GetTile(const Position& position) const;
 	const int32_t& GetRowSize() const { return _rowSize; }
 	const int32_t& GetColSize() const { return _colSize; }
 	bool IsDirty() const { return _isDirty; }
+	bool IsGameOver() const { return _isGameOver; }
 	bool IsValidTile(int32_t x, int32_t y) const;
 	bool IsValidTile(const Position& position) const;
 	bool IsOutline(int32_t x, int32_t y) const;
@@ -89,6 +91,7 @@ private:
 
 private:
 	bool _isDirty = false;
+	bool _isGameOver = false;
 
 	int32_t _rowSize = 20; // 세로 크기
 	int32_t _colSize = 20; // 가로 크기

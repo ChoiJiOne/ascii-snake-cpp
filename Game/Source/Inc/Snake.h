@@ -38,5 +38,4 @@ private:
 
 	float _moveElapsedTime = 0.0f;
 	float _moveIntervalTime = 0.0f;
-	bool _isDead = false;
 };

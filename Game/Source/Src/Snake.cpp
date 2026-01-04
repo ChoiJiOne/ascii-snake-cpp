@@ -44,7 +44,7 @@ Snake::~Snake() {}
 
 void Snake::Tick(float deltaSeconds)
 {
-	if (_isDead)
+	if (_context->IsGameOver())
 	{
 		return;
 	}
@@ -60,7 +60,7 @@ void Snake::Tick(float deltaSeconds)
 		EMoveResult result = Move();
 		if (result == EMoveResult::BLOCKED)
 		{
-			_isDead = true;
+			_context->SetGameOver(true);
 		}
 		else
 		{
@@ -143,7 +143,7 @@ EMoveResult Snake::Move()
 	{
 		if (!_context->TrySpawnFood())
 		{
-			_isDead = true; // NOTE: 먹이를 더 이상 생성할 수 없는 상황이라면 강제 GAME OVER.
+			_context->SetGameOver(true); // NOTE: 먹이를 더 이상 생성할 수 없는 상황이라면 강제 GAME OVER.
 			return result;
 		}
 
