@@ -5,6 +5,7 @@
 #include "FoodView.h"
 #include "GameController.h"
 #include "LevelView.h"
+#include "ReadyView.h"
 #include "Snake.h"
 
 GameApp::~GameApp()
@@ -29,13 +30,23 @@ void GameApp::Startup()
 	_consoleMgr->Clear();
 
 	ContextView* contextView = _actorMgr->Create<ContextView>(&_context);
+	ReadyView* readyView = _actorMgr->Create<ReadyView>();
 	Snake* snake = _actorMgr->Create<Snake>(&_context, 3, EMoveDirection::RIGHT);
 	FoodView* foodView = _actorMgr->Create<FoodView>(&_context);
 	LevelView* levelView = _actorMgr->Create<LevelView>(&_context);
 	GameController* gameController = _actorMgr->Create<GameController>(this, &_context);
 
-	std::vector<IActor*> readyStateUpdateActors = { gameController, contextView };
-	std::vector<IActor*> readyStateRenderActors = { contextView, gameController };
+	std::vector<IActor*> readyStateUpdateActors = 
+	{ 
+		gameController, 
+		contextView,
+	};
+	std::vector<IActor*> readyStateRenderActors = 
+	{ 
+		contextView, 
+		readyView,
+		gameController,
+	};
 	SetGameStateActors(EGameState::READY, readyStateUpdateActors, readyStateRenderActors, nullptr);
 
 	std::vector<IActor*> playStateUpdateActors =
