@@ -1,10 +1,10 @@
 #include "ConsoleManager.h"
 #include "GameAssert.h"
-#include "Food.h"
+#include "FoodView.h"
 #include "MathUtils.h"
 #include "StringUtils.h"
 
-Food::Food(GameContext* context)
+FoodView::FoodView(GameContext* context)
 {
 	GAME_CHECK(context != nullptr);
 	_context = context;
@@ -16,9 +16,9 @@ Food::Food(GameContext* context)
 	_isInitialized = true;
 }
 
-Food::~Food() {}
+FoodView::~FoodView() {}
 
-void Food::Tick(float deltaSeconds)
+void FoodView::Tick(float deltaSeconds)
 {
 	int32_t count = _context->GetSpawnedFoodCount();
 	if (_count != count)
@@ -28,7 +28,7 @@ void Food::Tick(float deltaSeconds)
 	}
 }
 
-void Food::Render()
+void FoodView::Render()
 {
 	if (!_isDirty)
 	{
@@ -39,7 +39,7 @@ void Food::Render()
 	_isDirty = false;
 }
 
-void Food::Release()
+void FoodView::Release()
 {
 	if (_isInitialized)
 	{

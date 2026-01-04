@@ -5,13 +5,13 @@
 
 class ConsoleManager;
 
-class Food : public IActor
+class FoodView : public IActor
 {
 public:
-	Food(GameContext* context);
-	virtual ~Food();
+	FoodView(GameContext* context);
+	virtual ~FoodView();
 
-	DISALLOW_COPY_AND_ASSIGN(Food);
+	DISALLOW_COPY_AND_ASSIGN(FoodView);
 
 	virtual void Tick(float deltaSeconds) override;
 	virtual void Render() override;

@@ -2,7 +2,7 @@
 #include "GameAssert.h"
 
 #include "ContextView.h"
-#include "Food.h"
+#include "FoodView.h"
 #include "PauseOrQuitActor.h"
 #include "Snake.h"
 
@@ -29,14 +29,14 @@ void GameApp::Startup()
 
 	IActor* contextView = _actorMgr->Create<ContextView>(&_context);
 	IActor* snake = _actorMgr->Create<Snake>(&_context, 3, EMoveDirection::RIGHT, 0.5f);
-	IActor* food = _actorMgr->Create<Food>(&_context);
+	IActor* foodView = _actorMgr->Create<FoodView>(&_context);
 	IActor* pauseOrQuitActor = _actorMgr->Create<PauseOrQuitActor>(this);
 
 	_updateActors = 
 	{ 
 		pauseOrQuitActor,
 		snake,
-		food,
+		foodView,
 		contextView,
 	};
 
@@ -44,7 +44,7 @@ void GameApp::Startup()
 	{
 		contextView,
 		snake,
-		food,
+		foodView,
 		pauseOrQuitActor,
 	};
 
