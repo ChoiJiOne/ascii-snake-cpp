@@ -23,8 +23,6 @@ Snake::Snake(GameContext* context, int32_t defaultBodyCount, EMoveDirection defa
 		{ EKey::DOWN,  EMoveDirection::DOWN},
 	};
 
-	Reset();
-
 	_isInitialized = true;
 }
 

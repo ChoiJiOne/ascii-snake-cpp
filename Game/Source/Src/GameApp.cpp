@@ -3,8 +3,8 @@
 
 #include "ContextView.h"
 #include "FoodView.h"
+#include "GameController.h"
 #include "LevelView.h"
-#include "PauseOrQuitActor.h"
 #include "Snake.h"
 
 GameApp::~GameApp()
@@ -28,52 +28,79 @@ void GameApp::Startup()
 	_consoleMgr->SetTitle("Snake"); // TODO: 하드 코딩 제거 필요.
 	_consoleMgr->Clear();
 
-	IActor* contextView = _actorMgr->Create<ContextView>(&_context);
-	IActor* snake = _actorMgr->Create<Snake>(&_context, 3, EMoveDirection::RIGHT);
-	IActor* foodView = _actorMgr->Create<FoodView>(&_context);
-	IActor* levelView = _actorMgr->Create<LevelView>(&_context);
-	IActor* pauseOrQuitActor = _actorMgr->Create<PauseOrQuitActor>(this);
+	ContextView* contextView = _actorMgr->Create<ContextView>(&_context);
+	Snake* snake = _actorMgr->Create<Snake>(&_context, 3, EMoveDirection::RIGHT);
+	FoodView* foodView = _actorMgr->Create<FoodView>(&_context);
+	LevelView* levelView = _actorMgr->Create<LevelView>(&_context);
+	GameController* gameController = _actorMgr->Create<GameController>(this, &_context);
 
-	std::vector<IActor*> updateActors =
+	std::vector<IActor*> readyStateUpdateActors = { gameController, contextView };
+	std::vector<IActor*> readyStateRenderActors = { contextView, gameController };
+	SetGameStateActors(EGameState::READY, readyStateUpdateActors, readyStateRenderActors, nullptr);
+
+	std::vector<IActor*> playStateUpdateActors =
 	{
-		pauseOrQuitActor,
+		gameController,
 		snake,
 		foodView,
 		levelView,
 		contextView,
 	};
 
-	std::vector<IActor*> renderActors =
+	std::vector<IActor*> playStateRenderActors =
 	{
 		contextView,
 		snake,
 		foodView,
 		levelView,
-		pauseOrQuitActor,
+		gameController,
 	};
-
-	SetGameStateActors(EGameState::PLAYING, updateActors, renderActors);
-
-	SetProcessTick([this](float deltaSeconds)
+	SetGameStateActors(EGameState::PLAY, playStateUpdateActors, playStateRenderActors,
+		[this, snake]()
 		{
-			auto& updateActors = _updateActorsMap.find(_gameState);
-			if (updateActors != _updateActorsMap.end()) // TOCO: 못 찾았을 때 에러 처리 필요.
-			{
-				for (auto& actor : updateActors->second)
-				{
-					actor->Tick(deltaSeconds);
-				}
-			}
+			_context.Reset();
+			snake->Reset();
+			_context.TrySpawnFood();
+		}
+	);
 
-			auto& renderActors = _renderActorsMap.find(_gameState);
-			if (renderActors != _renderActorsMap.end()) // TOCO: 못 찾았을 때 에러 처리 필요.
-			{
-				for (auto& actor : renderActors->second)
-				{
-					actor->Render();
-				}
-			}
-		});
+	std::vector<IActor*> pauseStateUpdateActors =
+	{
+		gameController,
+		foodView,
+		levelView,
+		contextView,
+	};
+
+	std::vector<IActor*> pauseStateRenderActors =
+	{
+		contextView,
+		snake,
+		foodView,
+		levelView,
+		gameController,
+	};
+	SetGameStateActors(EGameState::PAUSE, pauseStateUpdateActors, pauseStateRenderActors, nullptr);
+
+	std::vector<IActor*> gameOverStateUpdateActors =
+	{
+		gameController,
+		foodView,
+		levelView,
+		contextView,
+	};
+
+	std::vector<IActor*> gameOverStateRenderActors =
+	{
+		contextView,
+		snake,
+		foodView,
+		levelView,
+		gameController,
+	};
+	SetGameStateActors(EGameState::GAME_OVER, gameOverStateUpdateActors, gameOverStateRenderActors, nullptr);
+
+	SetProcessTick([this](float deltaSeconds) { ProcessTick(deltaSeconds); });
 
 	_isInitialized = true;
 }
@@ -90,8 +117,47 @@ void GameApp::Shutdown()
 	IApp::Shutdown();
 }
 
-void GameApp::SetGameStateActors(const EGameState& gameState, const std::vector<IActor*>& updateActors, const std::vector<IActor*>& renderActors)
+void GameApp::SetGameState(const EGameState& gameState, bool bNeedAction)
 {
+	_gameState = gameState;
+
+	auto it = _actionMap.find(gameState);
+	if (it != _actionMap.end() && it->second != nullptr && bNeedAction)
+	{
+		const std::function<void()>& action = it->second;
+		action();
+	}
+}
+
+void GameApp::SetGameStateActors(
+	const EGameState& gameState, 
+	const std::vector<IActor*>& updateActors, 
+	const std::vector<IActor*>& renderActors,
+	const std::function<void()>& action
+)
+{
+	_actionMap[gameState] = action;
 	_updateActorsMap[gameState] = updateActors;
 	_renderActorsMap[gameState] = renderActors;
+}
+
+void GameApp::ProcessTick(float deltaSeconds)
+{
+	auto& updateActors = _updateActorsMap.find(_gameState);
+	if (updateActors != _updateActorsMap.end()) // TOCO: 못 찾았을 때 에러 처리 필요.
+	{
+		for (auto& actor : updateActors->second)
+		{
+			actor->Tick(deltaSeconds);
+		}
+	}
+
+	auto& renderActors = _renderActorsMap.find(_gameState);
+	if (renderActors != _renderActorsMap.end()) // TOCO: 못 찾았을 때 에러 처리 필요.
+	{
+		for (auto& actor : renderActors->second)
+		{
+			actor->Render();
+		}
+	}
 }

@@ -9,8 +9,6 @@ FoodView::FoodView(GameContext* context)
 	_context = context;
 	_consoleMgr = ConsoleManager::GetPtr();
 
-	_context->TrySpawnFood();
-
 	_countViewPosition = { 22, 3 };
 	_isInitialized = true;
 }
@@ -20,7 +18,7 @@ FoodView::~FoodView() {}
 void FoodView::Tick(float deltaSeconds)
 {
 	int32_t count = _context->GetSpawnedFoodCount();
-	if (_count != count)
+	if (count > 0 && _count != count)
 	{
 		_count = count;
 		_isDirty = true;

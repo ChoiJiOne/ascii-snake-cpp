@@ -42,6 +42,8 @@ void GameContext::Reset()
 		}
 	}
 
+	_isGameOver = false;
+	_spawnedFoodCount = 0;
 	_level = _minLevel;
 }
 
