@@ -23,8 +23,7 @@ public:
 	const int32_t& GetMinScore() const { return _minScore; }
 	const int32_t& GetMaxScore() const { return _maxScore; }
 	const float& GetIntervalTime() const { return _intervalTime; }
-
-	EScoreState GetScoreState(int32_t score);
+	EScoreState GetScoreState(int32_t score) const;
 
 private:
 	int32_t _level = 0;

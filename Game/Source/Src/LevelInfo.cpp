@@ -55,7 +55,7 @@ LevelInfo& LevelInfo::operator=(const LevelInfo& instance) noexcept
 	return *this;
 }
 
-EScoreState LevelInfo::GetScoreState(int32_t score)
+EScoreState LevelInfo::GetScoreState(int32_t score) const
 {
 	if (score < _minScore)
 	{

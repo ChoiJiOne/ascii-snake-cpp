@@ -82,6 +82,7 @@ public:
 	EMoveResult Move(Position& position, const EMoveDirection& moveDirection, bool bKeepSrc = false);
 
 	const LevelInfo& GetCurrentLevelInfo();
+	bool TryLevelUp();
 
 private:
 	Position GetRandomEmptyPosition() const;

@@ -262,6 +262,22 @@ const LevelInfo& GameContext::GetCurrentLevelInfo()
 	return _levelInfos.back();
 }
 
+bool GameContext::TryLevelUp()
+{
+	int32_t currentScore = _spawnedFoodCount - 1;
+
+	const LevelInfo& currentLevelInfo = GetCurrentLevelInfo();
+	const EScoreState& currentScoreState = currentLevelInfo.GetScoreState(currentScore);
+
+	if (currentScoreState != EScoreState::ABOVE_MAX || _level >= _maxLevel)
+	{
+		return false;
+	}
+
+	_level++;
+	return true;
+}
+
 Position GameContext::GetRandomEmptyPosition() const
 {
 	Position randomPosition{ -1, -1 };

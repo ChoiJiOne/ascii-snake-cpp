@@ -141,6 +141,12 @@ EMoveResult Snake::Move()
 
 	if (result == EMoveResult::CONSUME)
 	{
+		if (_context->TryLevelUp())
+		{
+			const LevelInfo& levelInfo = _context->GetCurrentLevelInfo();
+			_moveIntervalTime = levelInfo.GetIntervalTime();
+		}
+
 		AddBody(tail);
 	}
 
