@@ -48,6 +48,8 @@ public:
 
 	DISALLOW_COPY_AND_ASSIGN(GameContext);
 
+	void Reset();
+
 	void SetTile(int32_t x, int32_t y, const ETile& tile, bool bForceSet = false);
 	void SetTile(const Position& position, const ETile& tile);
 	void SetDirty(bool isDirty) { _isDirty = isDirty; }

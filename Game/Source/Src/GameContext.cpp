@@ -6,17 +6,6 @@
 GameContext::GameContext()
 {
 	_tiles = std::vector<ETile>(_rowSize * _colSize, ETile::EMPTY);
-	for (int y = 0; y < _rowSize; ++y)
-	{
-		for (int x = 0; x < _colSize; ++x)
-		{
-			if (IsOutline(x, y))
-			{
-				SetTile(x, y, ETile::WALL);
-			}
-		}
-	}
-
 	_minPosition = { 1, 1 };
 	_maxPosition = { _colSize - 2, _rowSize - 2 };
 
@@ -34,11 +23,26 @@ GameContext::GameContext()
 
 	_minLevel = _levelInfos.front().GetLevel();
 	_maxLevel = _levelInfos.back().GetLevel();
-	_level = _minLevel;
+
+	Reset();
 }
 
 GameContext::~GameContext()
 {
+}
+
+void GameContext::Reset()
+{
+	for (int y = 0; y < _rowSize; ++y)
+	{
+		for (int x = 0; x < _colSize; ++x)
+		{
+			ETile tile = IsOutline(x, y) ? ETile::WALL : ETile::EMPTY;
+			SetTile(x, y, tile);
+		}
+	}
+
+	_level = _minLevel;
 }
 
 void GameContext::SetTile(int32_t x, int32_t y, const ETile& tile, bool bForceSet)
