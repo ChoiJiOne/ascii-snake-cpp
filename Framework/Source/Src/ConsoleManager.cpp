@@ -61,6 +61,20 @@ void ConsoleManager::Clear()
 	GAME_CHECK(SetConsoleCursorPosition(_outputHandle, topLeftPos));
 }
 
+void ConsoleManager::ClearRegion(int32_t x, int32_t y, int32_t width, int32_t height)
+{
+	width = width < 0 ? -width : width;
+	height = height < 0 ? -height : height;
+
+	for (int32_t dx = 0; dx < width; ++dx)
+	{
+		for (int32_t dy = 0; dy < height; ++dy)
+		{
+			Print(x + dx, y + dy, WHITE_SPACE);
+		}
+	}
+}
+
 void ConsoleManager::Print(int32_t x, int32_t y, char c)
 {
 	MoveCursor(x, y);

@@ -17,6 +17,7 @@ public:
 	void SetVisibleCursor(bool isVisible);
 	void SetTitle(const std::string_view& title);
 	void Clear();
+	void ClearRegion(int32_t x, int32_t y, int32_t width, int32_t height);
 
 	void Print(int32_t x, int32_t y, char c);
 	void Print(int32_t x, int32_t y, const std::string_view& str);
