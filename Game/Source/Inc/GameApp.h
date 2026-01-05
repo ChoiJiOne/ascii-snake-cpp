@@ -35,7 +35,7 @@ private:
 	void ProcessTick(float deltaSeconds);
 
 private:
-	EGameState _gameState = EGameState::READY;
+	EGameState _gameState = EGameState::GAME_OVER;
 	GameContext _context;
 
 	std::map<EGameState, std::function<void()>> _actionMap;

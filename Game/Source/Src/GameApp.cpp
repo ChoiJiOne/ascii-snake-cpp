@@ -4,6 +4,7 @@
 #include "ContextView.h"
 #include "FoodView.h"
 #include "GameController.h"
+#include "GameOverView.h"
 #include "LevelView.h"
 #include "ReadyView.h"
 #include "Snake.h"
@@ -35,6 +36,7 @@ void GameApp::Startup()
 	FoodView* foodView = _actorMgr->Create<FoodView>(&_context);
 	LevelView* levelView = _actorMgr->Create<LevelView>(&_context);
 	GameController* gameController = _actorMgr->Create<GameController>(this, &_context);
+	GameOverView* gameOverView = _actorMgr->Create<GameOverView>(&_context);
 
 	std::vector<IActor*> readyStateUpdateActors = 
 	{ 
@@ -108,6 +110,7 @@ void GameApp::Startup()
 		foodView,
 		levelView,
 		gameController,
+		gameOverView,
 	};
 	SetGameStateActors(EGameState::GAME_OVER, gameOverStateUpdateActors, gameOverStateRenderActors, nullptr);
 
