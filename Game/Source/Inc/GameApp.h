@@ -5,10 +5,11 @@
 
 enum class EGameState
 {
-	READY = 0x00,
-	PLAY = 0x01,
-	PAUSE = 0x02,
-	GAME_OVER = 0x03,
+	NONE = 0x00,
+	READY = 0x01,
+	PLAY = 0x02,
+	PAUSE = 0x03,
+	GAME_OVER = 0x04,
 };
 
 class GameApp : public IApp
