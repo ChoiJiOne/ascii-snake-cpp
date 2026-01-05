@@ -55,3 +55,8 @@ void GameOverView::Release()
 	_context = nullptr;
 	_isInitialized = false;
 }
+
+void GameOverView::Reset()
+{
+	_isDirty = true;
+}

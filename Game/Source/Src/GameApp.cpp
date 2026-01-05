@@ -69,10 +69,11 @@ void GameApp::Startup()
 		gameController,
 	};
 	SetGameStateActors(EGameState::PLAY, playStateUpdateActors, playStateRenderActors,
-		[this, snake]()
+		[this, snake, gameOverView]()
 		{
 			_context.Reset();
 			snake->Reset();
+			gameOverView->Reset();
 			_context.TrySpawnFood();
 		}
 	);
