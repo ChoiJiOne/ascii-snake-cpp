@@ -1,69 +1,121 @@
-#include "ConsoleManager.h"
-#include "WindowsAssert.h"
+#include <Windows.h>
 
-void ConsoleManager::Startup()
+#include "ConsoleManager.h"
+
+EErrorCode ConsoleManager::Startup()
 {
 	if (_isInitialized)
 	{
-		return; // TODO: 여기에 에러 처리 필요.
+		return EErrorCode::ALREADY_INITIALIZED;
 	}
 
 	_outputHandle = GetStdHandle(STD_OUTPUT_HANDLE);
-	WINDOWS_CHECK(_outputHandle != INVALID_HANDLE_VALUE);
+	if (_outputHandle == INVALID_HANDLE_VALUE)
+	{
+		return EErrorCode::PLATFORM_API_FAILED;
+	}
 
 	_isInitialized = true;
 }
 
-void ConsoleManager::Shutdown()
+EErrorCode ConsoleManager::Shutdown()
 {
 	if (!_isInitialized)
 	{
-		return; // TODO: 여기에 에러 처리 필요
+		return EErrorCode::NOT_INITIALIZED;
 	}
 
 	_outputHandle = nullptr;
 	_isInitialized = false;
 }
 
-void ConsoleManager::MoveCursor(int32_t x, int32_t y)
+EErrorCode ConsoleManager::MoveCursor(int32_t x, int32_t y)
 {
 	COORD cursorPos = { static_cast<SHORT>(x), static_cast<SHORT>(y) };
-	WINDOWS_CHECK(SetConsoleCursorPosition(_outputHandle, cursorPos));
+
+	EErrorCode errorCode = EErrorCode::SUCCESS;
+	if (!SetConsoleCursorPosition(_outputHandle, cursorPos))
+	{
+		errorCode = EErrorCode::PLATFORM_API_FAILED;
+	}
+
+	return errorCode;
 }
 
-void ConsoleManager::SetVisibleCursor(bool isVisible)
+EErrorCode ConsoleManager::SetVisibleCursor(bool isVisible)
 {
 	CONSOLE_CURSOR_INFO info;
 
-	WINDOWS_CHECK(GetConsoleCursorInfo(_outputHandle, &info));
+	EErrorCode errorCode = EErrorCode::SUCCESS;
+	if (!GetConsoleCursorInfo(_outputHandle, &info))
+	{
+		errorCode = EErrorCode::PLATFORM_API_FAILED;
+		return errorCode;
+	}
+
 	info.bVisible = isVisible;
-	WINDOWS_CHECK(SetConsoleCursorInfo(_outputHandle, &info));
+	if (!SetConsoleCursorInfo(_outputHandle, &info))
+	{
+		errorCode = EErrorCode::PLATFORM_API_FAILED;
+		return errorCode;
+	}
+
+	return errorCode;
 }
 
-void ConsoleManager::SetTitle(const std::string_view& title)
+EErrorCode ConsoleManager::SetTitle(const std::string_view& title)
 {
-	WINDOWS_CHECK(SetConsoleTitle(title.data()));
+	EErrorCode errorCode = EErrorCode::SUCCESS;
+	if (!SetConsoleTitle(title.data()))
+	{
+		errorCode = EErrorCode::PLATFORM_API_FAILED;
+		return errorCode;
+	}
+
+	return errorCode;
 }
 
-void ConsoleManager::Clear()
+EErrorCode ConsoleManager::Clear()
 {
 	COORD topLeftPos = { 0 ,0 };
 	CONSOLE_SCREEN_BUFFER_INFO screen;
 	DWORD written;
 
-	WINDOWS_CHECK(GetConsoleScreenBufferInfo(_outputHandle, &screen));
-	WINDOWS_CHECK(FillConsoleOutputCharacterA(_outputHandle, WHITE_SPACE, screen.dwSize.X * screen.dwSize.Y, topLeftPos, &written));
-	WINDOWS_CHECK(FillConsoleOutputAttribute(
-		_outputHandle, 
+	EErrorCode errorCode = EErrorCode::SUCCESS;
+	if (!GetConsoleScreenBufferInfo(_outputHandle, &screen))
+	{
+		errorCode = EErrorCode::PLATFORM_API_FAILED;
+		return errorCode;
+	}
+
+	if (!FillConsoleOutputCharacterA(_outputHandle, WHITE_SPACE, screen.dwSize.X * screen.dwSize.Y, topLeftPos, &written))
+	{
+		errorCode = EErrorCode::PLATFORM_API_FAILED;
+		return errorCode;
+	}
+
+	if (!FillConsoleOutputAttribute(
+		_outputHandle,
 		FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_BLUE,
-		screen.dwSize.X * screen.dwSize.Y, 
-		topLeftPos, 
+		screen.dwSize.X * screen.dwSize.Y,
+		topLeftPos,
 		&written
-	));
-	WINDOWS_CHECK(SetConsoleCursorPosition(_outputHandle, topLeftPos));
+	))
+	{
+		errorCode = EErrorCode::PLATFORM_API_FAILED;
+		return errorCode;
+	}
+
+	if (!SetConsoleCursorPosition(_outputHandle, topLeftPos))
+	{
+		errorCode = EErrorCode::PLATFORM_API_FAILED;
+		return errorCode;
+	}
+
+	return errorCode;
 }
 
-void ConsoleManager::ClearRegion(int32_t x, int32_t y, int32_t width, int32_t height)
+EErrorCode ConsoleManager::ClearRegion(int32_t x, int32_t y, int32_t width, int32_t height)
 {
 	width = width < 0 ? -width : width;
 	height = height < 0 ? -height : height;
@@ -72,19 +124,47 @@ void ConsoleManager::ClearRegion(int32_t x, int32_t y, int32_t width, int32_t he
 	{
 		for (int32_t dy = 0; dy < height; ++dy)
 		{
-			Print(x + dx, y + dy, WHITE_SPACE);
+			EErrorCode errorCode = Print(x + dx, y + dy, WHITE_SPACE);
+			if (errorCode != EErrorCode::SUCCESS)
+			{
+				return errorCode;
+			}
 		}
 	}
+
+	return EErrorCode::SUCCESS;
 }
 
-void ConsoleManager::Print(int32_t x, int32_t y, char c)
+EErrorCode ConsoleManager::Print(int32_t x, int32_t y, char c)
 {
-	MoveCursor(x, y);
-	WINDOWS_CHECK(WriteConsoleA(_outputHandle, &c, CHAR_SIZE, nullptr, nullptr));
+	EErrorCode errorCode = MoveCursor(x, y);
+	if (errorCode != EErrorCode::SUCCESS)
+	{
+		return errorCode;
+	}
+
+	if (WriteConsoleA(_outputHandle, &c, CHAR_SIZE, nullptr, nullptr))
+	{
+		errorCode = EErrorCode::PLATFORM_API_FAILED;
+		return errorCode;
+	}
+
+	return errorCode;
 }
 
-void ConsoleManager::Print(int32_t x, int32_t y, const std::string_view& str)
+EErrorCode ConsoleManager::Print(int32_t x, int32_t y, const std::string_view& str)
 {
-	MoveCursor(x, y);
-	WINDOWS_CHECK(WriteConsoleA(_outputHandle, reinterpret_cast<const void*>(str.data()), static_cast<DWORD>(str.size()), nullptr, nullptr));
+	EErrorCode errorCode = MoveCursor(x, y);
+	if (errorCode != EErrorCode::SUCCESS)
+	{
+		return errorCode;
+	}
+
+	if (WriteConsoleA(_outputHandle, reinterpret_cast<const void*>(str.data()), static_cast<DWORD>(str.size()), nullptr, nullptr))
+	{
+		errorCode = EErrorCode::PLATFORM_API_FAILED;
+		return errorCode;
+	}
+
+	return errorCode;
 }

@@ -10,8 +10,8 @@ public:
 
 	DISALLOW_COPY_AND_ASSIGN(GameApp);
 
-	virtual void Startup() override;
-	virtual void Shutdown() override;
+	virtual EErrorCode Startup() override;
+	virtual EErrorCode Shutdown() override;
 
 private:
 	void ProcessTick(float deltaSeconds);

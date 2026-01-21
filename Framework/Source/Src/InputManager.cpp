@@ -1,11 +1,13 @@
+#include <Windows.h>
+
 #include "GenericAssert.h"
 #include "InputManager.h"
 
-void InputManager::Startup()
+EErrorCode InputManager::Startup()
 {
 	if (_isInitialized)
 	{
-		return; // TODO: 여기에 에러 처리 필요.
+		return EErrorCode::ALREADY_INITIALIZED;
 	}
 
 	_keys =
@@ -26,18 +28,18 @@ void InputManager::Startup()
 	}
 		
 	_isInitialized = true;
+	return EErrorCode::SUCCESS;
 }
 
-void InputManager::Shutdown()
+EErrorCode InputManager::Shutdown()
 {
 	if (!_isInitialized)
 	{
-		return; // TODO: 여기에 에러 처리 필요
+		return EErrorCode::NOT_INITIALIZED;
 	}
 
-	// CHECKME: 여기에서 리소스 정리.
-
 	_isInitialized = false;
+	return EErrorCode::SUCCESS;
 }
 
 void InputManager::Tick()

@@ -6,7 +6,7 @@
 
 #include "ActorManager.h"
 #include "ConsoleManager.h"
-#include "GameMacro.h"
+#include "Macro.h"
 #include "GameTimer.h"
 #include "InputManager.h"
 
@@ -16,14 +16,12 @@ public:
 	IApp();
 	virtual ~IApp();
 
-	virtual void Startup();
-	virtual void Shutdown();
+	virtual EErrorCode Startup();
+	virtual EErrorCode Shutdown();
 
 	void Run();
 	void SetDoneLoop(bool isDoneLoop) { _isDoneLoop = isDoneLoop; }
 	void SetProcessTick(const std::function<void(float)>& processTick) { _processTick = processTick; }
-
-	static IApp* GetApp() { return _app; }
 
 protected:
 	bool _isInitialized = false;
@@ -36,11 +34,7 @@ private:
 	void UpdateTick();
 
 private:
-	static IApp* _app;
-
 	bool _isDoneLoop = false;
-
 	std::function<void(float)> _processTick;
-
 	GameTimer _timer;
 };

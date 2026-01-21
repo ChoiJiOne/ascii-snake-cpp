@@ -1,5 +1,4 @@
 #include "GameApp.h"
-#include "GenericAssert.h"
 
 GameApp::~GameApp()
 {
@@ -9,11 +8,11 @@ GameApp::~GameApp()
 	}
 }
 
-void GameApp::Startup()
+EErrorCode GameApp::Startup()
 {
 	if (_isInitialized)
 	{
-		return; // TODO: 에러 로그 처리 필요.
+		return EErrorCode::ALREADY_INITIALIZED;
 	}
 
 	IApp::Startup();
@@ -25,18 +24,21 @@ void GameApp::Startup()
 	SetProcessTick([this](float deltaSeconds) { ProcessTick(deltaSeconds); });
 
 	_isInitialized = true;
+	return EErrorCode::SUCCESS;
 }
 
-void GameApp::Shutdown()
+EErrorCode GameApp::Shutdown()
 {
 	if (!_isInitialized)
 	{
-		return; // TODO: 에러 로그 처리 필요.
+		return EErrorCode::NOT_INITIALIZED;
 	}
 
 	_consoleMgr->SetVisibleCursor(true);
 
 	IApp::Shutdown();
+
+	return EErrorCode::SUCCESS;
 }
 
 void GameApp::ProcessTick(float deltaSeconds)

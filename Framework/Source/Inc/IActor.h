@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GameMacro.h"
+#include "Macro.h"
 
 class IActor
 {

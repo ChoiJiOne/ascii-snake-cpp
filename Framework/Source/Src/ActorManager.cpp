@@ -1,21 +1,21 @@
 #include "ActorManager.h"
-#include "GenericAssert.h"
 
-void ActorManager::Startup()
+EErrorCode ActorManager::Startup()
 {
 	if (_isInitialized)
 	{
-		return; // TODO: 여기에 에러 처리 필요.
+		return EErrorCode::ALREADY_INITIALIZED;
 	}
 
 	_isInitialized = true;
+	return EErrorCode::SUCCESS;
 }
 
-void ActorManager::Shutdown()
+EErrorCode ActorManager::Shutdown()
 {
 	if (!_isInitialized)
 	{
-		return; // TODO: 여기에 에러 처리 필요.
+		return EErrorCode::NOT_INITIALIZED;
 	}
 
 	for (size_t idx = 0; idx < _actorPool.size(); ++idx)
@@ -33,6 +33,7 @@ void ActorManager::Shutdown()
 	}
 
 	_isInitialized = false;
+	return EErrorCode::SUCCESS;
 }
 
 void ActorManager::Destroy(const IActor* actor)

@@ -1,11 +1,8 @@
 #include "IApp.h"
 #include "GenericAssert.h"
 
-IApp* IApp::_app = nullptr;
-
 IApp::IApp()
 {
-	_app = this;
 }
 
 IApp::~IApp()
@@ -14,29 +11,40 @@ IApp::~IApp()
 	{
 		Shutdown();
 	}
-
-	if (_app != nullptr)
-	{
-		_app = nullptr;
-	}
 }
 
-void IApp::Startup()
+EErrorCode IApp::Startup()
 {
 	if (_isInitialized)
 	{
-		return;
+		return EErrorCode::ALREADY_INITIALIZED;
 	}
 
 	_consoleMgr = ConsoleManager::GetPtr();
 	_inputMgr = InputManager::GetPtr();
 	_actorMgr = ActorManager::GetPtr();
 
-	_consoleMgr->Startup();
-	_inputMgr->Startup();
-	_actorMgr->Startup();
+	EErrorCode errorCode = EErrorCode::SUCCESS;
 
-	// NOTE: 하위 클래스에서 _isInitialized 값을 true로 설정.
+	errorCode = _consoleMgr->Startup();
+	if (errorCode != EErrorCode::SUCCESS)
+	{
+		return EErrorCode::FAILED_TO_INITIALIZE;
+	}
+
+	errorCode = _inputMgr->Startup();
+	if (errorCode != EErrorCode::SUCCESS)
+	{
+		return EErrorCode::FAILED_TO_INITIALIZE;
+	}
+
+	errorCode = _actorMgr->Startup();
+	if (errorCode != EErrorCode::SUCCESS)
+	{
+		return EErrorCode::FAILED_TO_INITIALIZE;
+	}
+
+	return errorCode;
 }
 
 void IApp::Run()
@@ -54,11 +62,11 @@ void IApp::Run()
 	}
 }
 
-void IApp::Shutdown()
+EErrorCode IApp::Shutdown()
 {
 	if (!_isInitialized)
 	{
-		return; // TODO: 에러 로그 처리 필요.
+		return EErrorCode::NOT_INITIALIZED;
 	}
 
 	if (_actorMgr != nullptr)
@@ -79,8 +87,8 @@ void IApp::Shutdown()
 		_consoleMgr = nullptr;
 	}
 
-	// NOTE: 여기에서 _isInitialized 값을 false로 설정.
 	_isInitialized = false;
+	return EErrorCode::SUCCESS;
 }
 
 void IApp::UpdateTick()

@@ -9,7 +9,7 @@
 {\
 	if(!(bool)(EXP))\
 	{\
-		ErrorUtils::ReportGenericAssertion(#EXP, __FILE__, __LINE__);\
+		ReportAssertion(#EXP, __FILE__, __LINE__);\
 		__debugbreak();\
 	}\
 }
@@ -19,7 +19,7 @@
 {\
 	if(!(bool)(EXP))\
 	{\
-		ErrorUtils::ReportGenericAssertion(#EXP, __FILE__, __LINE__, StringUtils::PrintF(__VA_ARGS__));\
+		ReportAssertion(#EXP, __FILE__, __LINE__, StringUtils::PrintF(__VA_ARGS__));\
 		__debugbreak();\
 	}\
 }

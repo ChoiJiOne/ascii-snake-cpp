@@ -3,6 +3,7 @@
 #include <memory>
 #include <vector>
 
+#include "Result.h"
 #include "IActor.h"
 #include "IManager.h"
 
@@ -11,8 +12,8 @@ class ActorManager : public IManager<ActorManager>
 public:
 	DISALLOW_COPY_AND_ASSIGN(ActorManager);
 
-	void Startup();
-	virtual void Shutdown() override;
+	virtual EErrorCode Startup() override;
+	virtual EErrorCode Shutdown() override;
 
 	template <typename TActor, typename... Args>
 	TActor* Create(Args&&... args)
