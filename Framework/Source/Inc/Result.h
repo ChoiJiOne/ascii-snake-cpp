@@ -1,43 +1,46 @@
 #pragma once
 
-#include "Error.h"
+#include <utility>
+#include <variant>
 
-#define MAKE_ERROR(code, message) Error((code), (message), __FILE__, __LINE__, __func__)
+#include "Error.h"
 
 template <typename T>
 class Result
 {
 public:
-	static Result Success(T value) { return Result(std::move(value)); }
-	static Result Fail(Error error) { return Result(std::move(error)); }
+	static Result Success(T value) { return Result(std::in_place_index<0>, std::move(value)); }
+	static Result Fail(Error error) { return Result(std::in_place_index<1>, std::move(error)); }
 
-	bool IsSuccess() const { return _isSuccess; }
-	const Error& GetError() const { return _error; }
+	bool IsSuccess() const { return std::holds_alternative<T>(_data); }
+
+	T& GetValue() { return std::get<T>(_data); }
+	const T& GetValue() const { return std::get<T>(_data); }
+	const Error& GetError() const { return std::get<Error>(_data); }
 
 private:
-	explicit Result(T value) : _isSuccess(true), _value(std::move(value)) {}
-	explicit Result(Error error) : _isSuccess(false), _error(std::move(error)) {}
+	explicit Result(std::in_place_index_t<0>, T value) : _data(std::in_place_index<0>, std::move(value)) {}
+	explicit Result(std::in_place_index_t<1>, Error error) : _data(std::in_place_index<1>, std::move(error)) {}
 
 private:
-	bool _isSuccess = false;
-	T _value;
-	Error _error;
+	std::variant<T, Error> _data;
 };
 
 template <>
 class Result<void>
 {
 public:
-	static Result Success() { return Result(true, Error()); }
-	static Result Fail(Error error) { return Result(false, std::move(error)); }
+	static Result Success() { return Result(std::in_place_index<0>); }
+	static Result Fail(Error error) { return Result(std::in_place_index<1>, std::move(error)); }
 
-	bool IsSuccess() const { return _isSuccess; }
-	const Error& GetError() const { return _error; }
+	bool IsSuccess() const { return std::holds_alternative<std::monostate>(_data); }
 
-private:
-	explicit Result(bool isOk, Error error) : _isSuccess(isOk), _error(std::move(error)) {}
+	const Error& GetError() const { return std::get<Error>(_data); }
 
 private:
-	bool _isSuccess = false;
-	Error _error;
+	explicit Result(std::in_place_index_t<0>) : _data(std::in_place_index<0>) {}
+	explicit Result(std::in_place_index_t<1>, Error error) : _data(std::in_place_index<1>, std::move(error)) {}
+
+private:
+	std::variant<std::monostate, Error> _data;
 };
