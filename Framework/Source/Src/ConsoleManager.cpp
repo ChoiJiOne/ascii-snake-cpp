@@ -2,96 +2,88 @@
 
 #include "ConsoleManager.h"
 
-EErrorCode ConsoleManager::Startup()
+Result<void> ConsoleManager::Startup()
 {
 	if (_isInitialized)
 	{
-		return EErrorCode::ALREADY_INITIALIZED;
+		return Result<void>::Fail(MAKE_ERROR(EErrorCode::ALREADY_INITIALIZED, "FAILED_TO_STARTUP_CONSOLE_MANAGER"));
 	}
 
 	_outputHandle = GetStdHandle(STD_OUTPUT_HANDLE);
 	if (_outputHandle == INVALID_HANDLE_VALUE)
 	{
-		return EErrorCode::PLATFORM_API_FAILED;
+		return Result<void>::Fail(MAKE_ERROR(EErrorCode::PLATFORM_API_FAILED, "FAILED_TO_GET_STANDARD_OUTPUT_HANDLE"));
 	}
 
 	_isInitialized = true;
+	return Result<void>::Success();
 }
 
-EErrorCode ConsoleManager::Shutdown()
+Result<void> ConsoleManager::Shutdown()
 {
 	if (!_isInitialized)
 	{
-		return EErrorCode::NOT_INITIALIZED;
+		return Result<void>::Fail(MAKE_ERROR(EErrorCode::NOT_INITIALIZED, "FAILED_TO_SHUTDOWN_INPUT_MANAGER"));
 	}
 
 	_outputHandle = nullptr;
 	_isInitialized = false;
+	return Result<void>::Success();
 }
 
-EErrorCode ConsoleManager::MoveCursor(int32_t x, int32_t y)
+Result<void> ConsoleManager::MoveCursor(int32_t x, int32_t y)
 {
 	COORD cursorPos = { static_cast<SHORT>(x), static_cast<SHORT>(y) };
-
-	EErrorCode errorCode = EErrorCode::SUCCESS;
 	if (!SetConsoleCursorPosition(_outputHandle, cursorPos))
 	{
-		errorCode = EErrorCode::PLATFORM_API_FAILED;
+		return Result<void>::Fail(MAKE_ERROR(EErrorCode::PLATFORM_API_FAILED, "FAILED_TO_SET_CURSOR_POSITION"));
 	}
 
-	return errorCode;
+	return Result<void>::Success();
 }
 
-EErrorCode ConsoleManager::SetVisibleCursor(bool isVisible)
+Result<void> ConsoleManager::SetVisibleCursor(bool isVisible)
 {
 	CONSOLE_CURSOR_INFO info;
 
-	EErrorCode errorCode = EErrorCode::SUCCESS;
 	if (!GetConsoleCursorInfo(_outputHandle, &info))
 	{
-		errorCode = EErrorCode::PLATFORM_API_FAILED;
-		return errorCode;
+		return Result<void>::Fail(MAKE_ERROR(EErrorCode::PLATFORM_API_FAILED, "FAILED_TO_GET_CURSOR_INFO"));
 	}
 
 	info.bVisible = isVisible;
 	if (!SetConsoleCursorInfo(_outputHandle, &info))
 	{
-		errorCode = EErrorCode::PLATFORM_API_FAILED;
-		return errorCode;
+		return Result<void>::Fail(MAKE_ERROR(EErrorCode::PLATFORM_API_FAILED, "FAILED_TO_SET_CURSOR_INFO"));
 	}
 
-	return errorCode;
+	return Result<void>::Success();
 }
 
-EErrorCode ConsoleManager::SetTitle(const std::string_view& title)
+Result<void> ConsoleManager::SetTitle(const std::string_view& title)
 {
-	EErrorCode errorCode = EErrorCode::SUCCESS;
 	if (!SetConsoleTitle(title.data()))
 	{
-		errorCode = EErrorCode::PLATFORM_API_FAILED;
-		return errorCode;
+		return Result<void>::Fail(MAKE_ERROR(EErrorCode::PLATFORM_API_FAILED, "FAILED_TO_SET_TITLE"));
 	}
 
-	return errorCode;
+	return Result<void>::Success();
 }
 
-EErrorCode ConsoleManager::Clear()
+Result<void> ConsoleManager::Clear()
 {
 	COORD topLeftPos = { 0 ,0 };
 	CONSOLE_SCREEN_BUFFER_INFO screen;
 	DWORD written;
 
-	EErrorCode errorCode = EErrorCode::SUCCESS;
 	if (!GetConsoleScreenBufferInfo(_outputHandle, &screen))
 	{
-		errorCode = EErrorCode::PLATFORM_API_FAILED;
-		return errorCode;
+		return Result<void>::Fail(MAKE_ERROR(EErrorCode::PLATFORM_API_FAILED, "FAILED_TO_GET_CONSOLE_SCREEN_BUFFER_INFO"));
 	}
 
 	if (!FillConsoleOutputCharacterA(_outputHandle, WHITE_SPACE, screen.dwSize.X * screen.dwSize.Y, topLeftPos, &written))
 	{
-		errorCode = EErrorCode::PLATFORM_API_FAILED;
-		return errorCode;
+		return Result<void>::Fail(MAKE_ERROR(EErrorCode::PLATFORM_API_FAILED, "FAILED_TO_FILL_OUTPUT_CHARACTER"));
 	}
 
 	if (!FillConsoleOutputAttribute(
@@ -102,20 +94,18 @@ EErrorCode ConsoleManager::Clear()
 		&written
 	))
 	{
-		errorCode = EErrorCode::PLATFORM_API_FAILED;
-		return errorCode;
+		return Result<void>::Fail(MAKE_ERROR(EErrorCode::PLATFORM_API_FAILED, "FAILED_TO_FILL_OUTPUT_ATTRIBUTE"));
 	}
 
 	if (!SetConsoleCursorPosition(_outputHandle, topLeftPos))
 	{
-		errorCode = EErrorCode::PLATFORM_API_FAILED;
-		return errorCode;
+		return Result<void>::Fail(MAKE_ERROR(EErrorCode::PLATFORM_API_FAILED, "FAILED_TO_SET_CURSOR_POSITION"));
 	}
 
-	return errorCode;
+	return Result<void>::Success();
 }
 
-EErrorCode ConsoleManager::ClearRegion(int32_t x, int32_t y, int32_t width, int32_t height)
+Result<void> ConsoleManager::ClearRegion(int32_t x, int32_t y, int32_t width, int32_t height)
 {
 	width = width < 0 ? -width : width;
 	height = height < 0 ? -height : height;
@@ -124,47 +114,45 @@ EErrorCode ConsoleManager::ClearRegion(int32_t x, int32_t y, int32_t width, int3
 	{
 		for (int32_t dy = 0; dy < height; ++dy)
 		{
-			EErrorCode errorCode = Print(x + dx, y + dy, WHITE_SPACE);
-			if (errorCode != EErrorCode::SUCCESS)
+			Result<void> result = Print(x + dx, y + dy, WHITE_SPACE);
+			if (!result.IsSuccess())
 			{
-				return errorCode;
+				return result;
 			}
 		}
 	}
 
-	return EErrorCode::SUCCESS;
+	return Result<void>::Success();
 }
 
-EErrorCode ConsoleManager::Print(int32_t x, int32_t y, char c)
+Result<void> ConsoleManager::Print(int32_t x, int32_t y, char c)
 {
-	EErrorCode errorCode = MoveCursor(x, y);
-	if (errorCode != EErrorCode::SUCCESS)
+	Result<void> result = MoveCursor(x, y);
+	if (!result.IsSuccess())
 	{
-		return errorCode;
+		return result;
 	}
 
-	if (WriteConsoleA(_outputHandle, &c, CHAR_SIZE, nullptr, nullptr))
+	if (!WriteConsoleA(_outputHandle, &c, CHAR_SIZE, nullptr, nullptr))
 	{
-		errorCode = EErrorCode::PLATFORM_API_FAILED;
-		return errorCode;
+		return Result<void>::Fail(MAKE_ERROR(EErrorCode::PLATFORM_API_FAILED, "FAILED_TO_WRITE_CONSOLE"));
 	}
 
-	return errorCode;
+	return Result<void>::Success();
 }
 
-EErrorCode ConsoleManager::Print(int32_t x, int32_t y, const std::string_view& str)
+Result<void> ConsoleManager::Print(int32_t x, int32_t y, const std::string_view& str)
 {
-	EErrorCode errorCode = MoveCursor(x, y);
-	if (errorCode != EErrorCode::SUCCESS)
+	Result<void> result = MoveCursor(x, y);
+	if (!result.IsSuccess())
 	{
-		return errorCode;
+		return result;
 	}
 
-	if (WriteConsoleA(_outputHandle, reinterpret_cast<const void*>(str.data()), static_cast<DWORD>(str.size()), nullptr, nullptr))
+	if (!WriteConsoleA(_outputHandle, reinterpret_cast<const void*>(str.data()), static_cast<DWORD>(str.size()), nullptr, nullptr))
 	{
-		errorCode = EErrorCode::PLATFORM_API_FAILED;
-		return errorCode;
+		return Result<void>::Fail(MAKE_ERROR(EErrorCode::PLATFORM_API_FAILED, "FAILED_TO_WRITE_CONSOLE"));
 	}
 
-	return errorCode;
+	return Result<void>::Success();
 }

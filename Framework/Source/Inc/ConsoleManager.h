@@ -10,17 +10,17 @@ class ConsoleManager : public IManager<ConsoleManager>
 public:
 	DISALLOW_COPY_AND_ASSIGN(ConsoleManager);
 
-	virtual EErrorCode Startup() override;
-	virtual EErrorCode Shutdown() override;
+	virtual Result<void> Startup() override;
+	virtual Result<void> Shutdown() override;
 	
-	EErrorCode MoveCursor(int32_t x, int32_t y);
-	EErrorCode SetVisibleCursor(bool isVisible);
-	EErrorCode SetTitle(const std::string_view& title);
-	EErrorCode Clear();
-	EErrorCode ClearRegion(int32_t x, int32_t y, int32_t width, int32_t height);
+	Result<void> MoveCursor(int32_t x, int32_t y);
+	Result<void> SetVisibleCursor(bool isVisible);
+	Result<void> SetTitle(const std::string_view& title);
+	Result<void> Clear();
+	Result<void> ClearRegion(int32_t x, int32_t y, int32_t width, int32_t height);
 
-	EErrorCode Print(int32_t x, int32_t y, char c);
-	EErrorCode Print(int32_t x, int32_t y, const std::string_view& str);
+	Result<void> Print(int32_t x, int32_t y, char c);
+	Result<void> Print(int32_t x, int32_t y, const std::string_view& str);
 
 private:
 	friend class IManager<ConsoleManager>;

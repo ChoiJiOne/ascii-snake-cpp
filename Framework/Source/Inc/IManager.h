@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Result.h"
 #include "ErrorUtils.h"
 #include "Macro.h"
 
@@ -14,8 +15,8 @@ public:
 	
 	bool IsInitialized() { return _isInitialized; }
 
-	virtual EErrorCode Startup() = 0;
-	virtual EErrorCode Shutdown() = 0;
+	virtual Result<void> Startup() = 0;
+	virtual Result<void> Shutdown() = 0;
 
 protected:
 	IManager() = default;

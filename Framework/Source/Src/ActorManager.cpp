@@ -1,21 +1,21 @@
 #include "ActorManager.h"
 
-EErrorCode ActorManager::Startup()
+Result<void> ActorManager::Startup()
 {
 	if (_isInitialized)
 	{
-		return EErrorCode::ALREADY_INITIALIZED;
+		return Result<void>::Fail(MAKE_ERROR(EErrorCode::ALREADY_INITIALIZED, "FAILED_TO_STARTUP_ACTOR_MANAGER"));
 	}
 
 	_isInitialized = true;
-	return EErrorCode::SUCCESS;
+	return Result<void>::Success();
 }
 
-EErrorCode ActorManager::Shutdown()
+Result<void> ActorManager::Shutdown()
 {
 	if (!_isInitialized)
 	{
-		return EErrorCode::NOT_INITIALIZED;
+		return Result<void>::Fail(MAKE_ERROR(EErrorCode::NOT_INITIALIZED, "FAILED_TO_SHUTDOWN_ACTOR_MANAGER"));
 	}
 
 	for (size_t idx = 0; idx < _actorPool.size(); ++idx)
@@ -33,7 +33,7 @@ EErrorCode ActorManager::Shutdown()
 	}
 
 	_isInitialized = false;
-	return EErrorCode::SUCCESS;
+	return Result<void>::Success();
 }
 
 void ActorManager::Destroy(const IActor* actor)

@@ -3,11 +3,11 @@
 #include "GenericAssert.h"
 #include "InputManager.h"
 
-EErrorCode InputManager::Startup()
+Result<void> InputManager::Startup()
 {
 	if (_isInitialized)
 	{
-		return EErrorCode::ALREADY_INITIALIZED;
+		return Result<void>::Fail(MAKE_ERROR(EErrorCode::ALREADY_INITIALIZED, "FAILED_TO_STARTUP_INPUT_MANAGER"));
 	}
 
 	_keys =
@@ -28,18 +28,18 @@ EErrorCode InputManager::Startup()
 	}
 		
 	_isInitialized = true;
-	return EErrorCode::SUCCESS;
+	return Result<void>::Success();
 }
 
-EErrorCode InputManager::Shutdown()
+Result<void> InputManager::Shutdown()
 {
 	if (!_isInitialized)
 	{
-		return EErrorCode::NOT_INITIALIZED;
+		return Result<void>::Fail(MAKE_ERROR(EErrorCode::NOT_INITIALIZED, "FAILED_TO_SHUTDOWN_INPUT_MANAGER"));
 	}
 
 	_isInitialized = false;
-	return EErrorCode::SUCCESS;
+	return Result<void>::Success();
 }
 
 void InputManager::Tick()

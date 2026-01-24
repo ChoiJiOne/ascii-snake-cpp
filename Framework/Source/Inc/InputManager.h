@@ -39,8 +39,8 @@ class InputManager : public IManager<InputManager>
 public:
 	DISALLOW_COPY_AND_ASSIGN(InputManager);
 
-	virtual EErrorCode Startup() override;
-	virtual EErrorCode Shutdown() override;
+	virtual Result<void> Startup() override;
+	virtual Result<void> Shutdown() override;
 
 	void Tick();
 	EPress GetKeyPress(const EKey& key);
