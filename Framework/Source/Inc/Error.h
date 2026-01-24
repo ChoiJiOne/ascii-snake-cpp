@@ -96,3 +96,6 @@ private:
 	int32_t _line = 0;
 	std::string _function;
 };
+
+
+#define MAKE_ERROR(code, message) Error((code), (message), __FILE__, __LINE__, __func__)
