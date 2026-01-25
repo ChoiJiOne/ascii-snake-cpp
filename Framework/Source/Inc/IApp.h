@@ -3,7 +3,7 @@
 #include "AppContext.h"
 #include "Result.h"
 
-class IGame
+class IApp
 {
 public:
 	virtual Result<void> OnStartup(const AppContext& appCtx) = 0;

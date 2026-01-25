@@ -3,7 +3,7 @@
 #include <functional>
 
 #include "GameTimer.h"
-#include "IGame.h"
+#include "IApp.h"
 
 class InputManager;
 
@@ -14,7 +14,7 @@ public:
 	virtual ~AppHost();
 
 	Result<void> Startup();
-	Result<void> Run(IGame& game);
+	Result<void> Run(IApp& app);
 	Result<void> Shutdown();
 
 private:

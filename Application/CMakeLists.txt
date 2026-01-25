@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.30.3)
 
-set(GAME_PROJECT_NAME "Game")
+set(GAME_PROJECT_NAME "App")
 set(GAME_PROJECT_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 
 set(GAME_SOURCE_PATH "${GAME_PROJECT_PATH}/Source")

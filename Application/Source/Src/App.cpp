@@ -1,11 +1,11 @@
-#include "Game.h"
+#include "App.h"
 #include "Snake.h"
 
-Game::Game()
+App::App()
 	: _renderer(ConsoleManager::GetPtr(), &_ctx)
 {}
 
-Result<void> Game::OnStartup(const AppContext& appCtx)
+Result<void> App::OnStartup(const AppContext& appCtx)
 {
 	ConsoleManager* consoleMgr = appCtx.GetConsoleManager();
 	if (consoleMgr == nullptr)
@@ -30,7 +30,7 @@ Result<void> Game::OnStartup(const AppContext& appCtx)
 	return Result<void>::Success();
 }
 
-void Game::OnPreTick(const AppContext& appCtx, float deltaSeconds)
+void App::OnPreTick(const AppContext& appCtx, float deltaSeconds)
 {
 	InputManager* inputMgr = appCtx.GetInputManager();
 	if (inputMgr->GetKeyPress(EKey::ESCAPE) == EPress::PRESSED)
@@ -39,7 +39,7 @@ void Game::OnPreTick(const AppContext& appCtx, float deltaSeconds)
 	}
 }
 
-void Game::OnTick(const AppContext& appCtx, float deltaSeconds)
+void App::OnTick(const AppContext& appCtx, float deltaSeconds)
 {
 	for (auto& actor : _actors)
 	{
@@ -52,12 +52,12 @@ void Game::OnTick(const AppContext& appCtx, float deltaSeconds)
 	}
 }
 
-void Game::OnPostTick(const AppContext& appCtx, float deltaSeconds)
+void App::OnPostTick(const AppContext& appCtx, float deltaSeconds)
 {
 	_renderer.Render(); // NOTE: 규칙만 갖춘다면 Game에서 렌더링 처리를 할 필요가 있을까? 프레임워크에서 해주면 안되나?
 }
 
-Result<void> Game::OnShutdown(const AppContext& appCtx)
+Result<void> App::OnShutdown(const AppContext& appCtx)
 {
 	ConsoleManager* consoleMgr = appCtx.GetConsoleManager();
 	if (consoleMgr == nullptr)

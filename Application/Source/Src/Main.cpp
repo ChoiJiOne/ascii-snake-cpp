@@ -1,10 +1,10 @@
 #include "AppHost.h"
-#include "Game.h"
+#include "App.h"
 
 int main(int argc, char* argv[])
 {
 	AppHost appHost;
-	Game game;
+	App app;
 
 	// CHECKME: 여기 main 엔트리 포인트 이후에 점검 필요
 	Result<void> result = appHost.Startup();
@@ -13,7 +13,7 @@ int main(int argc, char* argv[])
 		return 0; // NOTE: 여기에 뭔가 로그라도 찍어줘야 하지 않을까...?
 	}
 
-	result = appHost.Run(game);
+	result = appHost.Run(app);
 	if (!result.IsSuccess())
 	{
 		return 0; // NOTE: 여기에 뭔가 로그라도 찍어줘야 하지 않을까...?

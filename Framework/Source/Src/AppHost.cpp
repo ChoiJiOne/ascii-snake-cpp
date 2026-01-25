@@ -40,12 +40,12 @@ Result<void> AppHost::Startup()
 	return Result<void>::Success();
 }
 
-Result<void> AppHost::Run(IGame& game)
+Result<void> AppHost::Run(IApp& app)
 {
 	AppContext ctx(ActorManager::GetPtr(), ConsoleManager::GetPtr(), InputManager::GetPtr());
 	ctx.SetRequestQuit([this]() { _isQuit = true; });
 
-	Result<void> resultStartup = game.OnStartup(ctx);
+	Result<void> resultStartup = app.OnStartup(ctx);
 	if (!resultStartup.IsSuccess())
 	{
 		return resultStartup;
@@ -54,12 +54,12 @@ Result<void> AppHost::Run(IGame& game)
 	while (!_isQuit)
 	{
 		UpdateTick(ctx.GetInputManager());
-		game.OnPreTick(ctx, _timer.GetDeltaSeconds());
-		game.OnTick(ctx, _timer.GetDeltaSeconds());
-		game.OnPostTick(ctx, _timer.GetDeltaSeconds());
+		app.OnPreTick(ctx, _timer.GetDeltaSeconds());
+		app.OnTick(ctx, _timer.GetDeltaSeconds());
+		app.OnPostTick(ctx, _timer.GetDeltaSeconds());
 	}
 
-	Result<void> resultShutdown = game.OnShutdown(ctx);
+	Result<void> resultShutdown = app.OnShutdown(ctx);
 	if (!resultShutdown.IsSuccess())
 	{
 		return resultShutdown;
