@@ -1,5 +1,9 @@
 #include "Game.h"
 
+Game::Game()
+	: _renderer(ConsoleManager::GetPtr(), &_context)
+{}
+
 Result<void> Game::OnStartup(const AppContext& appCtx)
 {
 	ConsoleManager* consoleMgr = appCtx.GetConsoleManager();
@@ -12,10 +16,12 @@ Result<void> Game::OnStartup(const AppContext& appCtx)
 	consoleMgr->SetTitle("Snake"); // TODO: 하드 코딩 제거 필요.
 	consoleMgr->Clear();
 
+	_context.Reset();
+
 	return Result<void>::Success();
 }
 
-void Game::OnUpdate(const AppContext& appCtx, float deltaSeconds)
+void Game::OnTick(const AppContext& appCtx, float deltaSeconds)
 {
 	InputManager* inputMgr = appCtx.GetInputManager();
 	ConsoleManager* consoleMgr = appCtx.GetConsoleManager();
@@ -24,6 +30,8 @@ void Game::OnUpdate(const AppContext& appCtx, float deltaSeconds)
 	{
 		appCtx.RequestQuit();
 	}
+
+	_renderer.Render();
 }
 
 Result<void> Game::OnShutdown(const AppContext& appCtx)

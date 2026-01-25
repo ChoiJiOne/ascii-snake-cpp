@@ -16,24 +16,24 @@ Result<void> AppHost::Startup()
 	}
 
 	ConsoleManager& consoleMgr = ConsoleManager::Get();
-	Result<void> consoleMgrStartupResult = consoleMgr.Startup();
-	if (!consoleMgrStartupResult.IsSuccess())
+	Result<void> resultConsoleMgrStartup = consoleMgr.Startup();
+	if (!resultConsoleMgrStartup.IsSuccess())
 	{
-		return consoleMgrStartupResult;
+		return resultConsoleMgrStartup;
 	}
 
 	InputManager& inputMgr = InputManager::Get();
-	Result<void> inputMgrStartupResult = inputMgr.Startup();
-	if (!inputMgrStartupResult.IsSuccess())
+	Result<void> resultInputMgrStartup = inputMgr.Startup();
+	if (!resultInputMgrStartup.IsSuccess())
 	{
-		return inputMgrStartupResult;
+		return resultInputMgrStartup;
 	}
 
 	ActorManager& actorMgr = ActorManager::Get();
-	Result<void> actorMgrStartupResult = actorMgr.Startup();
-	if (!actorMgrStartupResult.IsSuccess())
+	Result<void> resultActorMgrStartup = actorMgr.Startup();
+	if (!resultActorMgrStartup.IsSuccess())
 	{
-		return actorMgrStartupResult;
+		return resultActorMgrStartup;
 	}
 
 	_isInitialized = true;
@@ -45,22 +45,22 @@ Result<void> AppHost::Run(IGame& game)
 	AppContext context(ActorManager::GetPtr(), ConsoleManager::GetPtr(), InputManager::GetPtr());
 	context.SetRequestQuit([this]() { _isQuit = true; });
 
-	Result<void> startupResult = game.OnStartup(context);
-	if (!startupResult.IsSuccess())
+	Result<void> resultStartup = game.OnStartup(context);
+	if (!resultStartup.IsSuccess())
 	{
-		return startupResult;
+		return resultStartup;
 	}
 
 	while (!_isQuit)
 	{
 		UpdateTick(context.GetInputManager());
-		game.OnUpdate(context, _timer.GetDeltaSeconds());
+		game.OnTick(context, _timer.GetDeltaSeconds());
 	}
 
-	Result<void> shutdownResult = game.OnShutdown(context);
-	if (!shutdownResult.IsSuccess())
+	Result<void> resultShutdown = game.OnShutdown(context);
+	if (!resultShutdown.IsSuccess())
 	{
-		return shutdownResult;
+		return resultShutdown;
 	}
 
 	return Result<void>::Success();
@@ -74,24 +74,24 @@ Result<void> AppHost::Shutdown()
 	}
 
 	ActorManager& actorMgr = ActorManager::Get();
-	Result<void> actorMgrShutdownResult = actorMgr.Shutdown();
-	if (!actorMgrShutdownResult.IsSuccess())
+	Result<void> resultActorMgrShutdown = actorMgr.Shutdown();
+	if (!resultActorMgrShutdown.IsSuccess())
 	{
-		return actorMgrShutdownResult;
+		return resultActorMgrShutdown;
 	}
 
 	InputManager& inputMgr = InputManager::Get();
-	Result<void> inputMgrShutdownResult = inputMgr.Shutdown();
-	if (!inputMgrShutdownResult.IsSuccess())
+	Result<void> resultInputMgrShutdown = inputMgr.Shutdown();
+	if (!resultInputMgrShutdown.IsSuccess())
 	{
-		return inputMgrShutdownResult;
+		return resultInputMgrShutdown;
 	}
 
 	ConsoleManager& consoleMgr = ConsoleManager::Get();
-	Result<void> consoleMgrShutdownResult = consoleMgr.Shutdown();
-	if (!consoleMgrShutdownResult.IsSuccess())
+	Result<void> resultConsoleMgrShutdown = consoleMgr.Shutdown();
+	if (!resultConsoleMgrShutdown.IsSuccess())
 	{
-		return consoleMgrShutdownResult;
+		return resultConsoleMgrShutdown;
 	}
 
 	_isInitialized = false;
