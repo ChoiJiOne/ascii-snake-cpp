@@ -1,7 +1,7 @@
 #include "Game.h"
 
 Game::Game()
-	: _renderer(ConsoleManager::GetPtr(), &_context)
+	: _renderer(ConsoleManager::GetPtr(), &_ctx)
 {}
 
 Result<void> Game::OnStartup(const AppContext& appCtx)
@@ -16,7 +16,7 @@ Result<void> Game::OnStartup(const AppContext& appCtx)
 	consoleMgr->SetTitle("Snake"); // TODO: 하드 코딩 제거 필요.
 	consoleMgr->Clear();
 
-	_context.Reset();
+	_ctx.Reset();
 
 	return Result<void>::Success();
 }

@@ -19,6 +19,6 @@ public:
 	virtual Result<void> OnShutdown(const AppContext& appCtx) override;
 
 private:
-	GameContext _context;
+	GameContext _ctx;
 	GameRenderer _renderer;
 };
