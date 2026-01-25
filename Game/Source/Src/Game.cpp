@@ -1,8 +1,5 @@
 #include "Game.h"
 
-int x = 0;
-int y = 0;
-
 Result<void> Game::OnStartup(const AppContext& appCtx)
 {
 	ConsoleManager* consoleMgr = appCtx.GetConsoleManager();
