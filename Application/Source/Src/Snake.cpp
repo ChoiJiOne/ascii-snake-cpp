@@ -3,14 +3,14 @@
 
 #include "Snake.h"
 
-Snake::Snake(GameContext* context, int32_t defaultBodyCount, EMoveDirection defaultMoveDirection)
+Snake::Snake(GameContext* ctx, int32_t defaultBodyCount, EMoveDirection defaultMoveDirection)
 	: _defaultBodyCount(defaultBodyCount)
 	, _defaultMoveDirection(defaultMoveDirection)
 	, _prevMoveDirection(defaultMoveDirection)
 	, _currMoveDirection(defaultMoveDirection)
 {
-	CHECK(context != nullptr);
-	_context = context;
+	CHECK(ctx != nullptr);
+	_ctx = ctx;
 
 	_inputMgr = InputManager::GetPtr();
 	CHECK(_inputMgr != nullptr);
@@ -30,7 +30,7 @@ Snake::~Snake() {}
 
 void Snake::Tick(float deltaSeconds)
 {
-	if (_context->IsGameOver())
+	if (_ctx->IsGameOver())
 	{
 		return;
 	}
@@ -46,7 +46,7 @@ void Snake::Tick(float deltaSeconds)
 		EMoveResult result = Move();
 		if (result == EMoveResult::BLOCKED)
 		{
-			_context->SetGameOver(true);
+			_ctx->SetGameOver(true);
 		}
 		else
 		{
@@ -69,12 +69,12 @@ void Snake::Tick(float deltaSeconds)
 
 void Snake::Release()
 {
-	if (_isInitialized)
+	if (!_isInitialized)
 	{
 		return;
 	}
 
-	_context = nullptr;
+	_ctx = nullptr;
 	_isInitialized = false;
 }
 
@@ -83,8 +83,8 @@ void Snake::Reset()
 	_prevMoveDirection = _defaultMoveDirection;
 	_currMoveDirection = _defaultMoveDirection;
 
-	_head = { _context->GetColSize() / 2, _context->GetRowSize() / 2 };
-	_context->SetTile(_head, ETile::HEAD);
+	_head = { _ctx->GetColSize() / 2, _ctx->GetRowSize() / 2 };
+	_ctx->SetTile(_head, ETile::HEAD);
 
 	ClearBodys();
 	for (int32_t count = 1; count <= _defaultBodyCount; ++count)
@@ -104,13 +104,13 @@ void Snake::ClearBodys()
 
 void Snake::AddBody(const Position& position)
 {
-	if (!_context->IsValidTile(position))
+	if (!_ctx->IsValidTile(position))
 	{
 		return;
 	}
 
 	_bodys.push_back(position);
-	_context->SetTile(position, ETile::BODY);
+	_ctx->SetTile(position, ETile::BODY);
 }
 
 bool Snake::UpdateMoveDirection()
@@ -134,7 +134,7 @@ bool Snake::UpdateMoveDirection()
 EMoveResult Snake::Move()
 {
 	Position cacheHead = _head;
-	EMoveResult result = _context->Move(_head, _currMoveDirection);
+	EMoveResult result = _ctx->Move(_head, _currMoveDirection);
 	if (result == EMoveResult::BLOCKED)
 	{
 		return result;
@@ -143,13 +143,13 @@ EMoveResult Snake::Move()
 	Position tail = _bodys.back();
 	_bodys.pop_back();
 	_bodys.push_front(cacheHead);
-	_context->Swap(tail, cacheHead);
+	_ctx->Swap(tail, cacheHead);
 
 	if (result == EMoveResult::CONSUME)
 	{
-		if (!_context->TrySpawnFood())
+		if (!_ctx->TrySpawnFood())
 		{
-			_context->SetGameOver(true); // NOTE: 먹이를 더 이상 생성할 수 없는 상황이라면 강제 GAME OVER.
+			_ctx->SetGameOver(true); // NOTE: 먹이를 더 이상 생성할 수 없는 상황이라면 강제 GAME OVER.
 			return result;
 		}
 

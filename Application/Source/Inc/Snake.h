@@ -9,7 +9,7 @@
 class Snake : public IActor
 {
 public:
-	Snake(GameContext* context, int32_t defaultBodyCount, EMoveDirection defaultMoveDirection);
+	Snake(GameContext* ctx, int32_t defaultBodyCount, EMoveDirection defaultMoveDirection);
 	virtual ~Snake();
 
 	DISALLOW_COPY_AND_ASSIGN(Snake);
@@ -27,7 +27,7 @@ private:
 	EMoveResult Move();
 
 private:
-	GameContext* _context = nullptr;
+	GameContext* _ctx = nullptr;
 	InputManager* _inputMgr = nullptr;
 
 	int32_t _defaultBodyCount;
